@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                    <div class="d-flex align-items-center">
+                        <h1 class="h3 mb-0">Profile</h1>
+                        <span class="badge bg-primary ms-2 rounded-pill">{{ 'ROLE_ADMIN' in user.roles ? 'Administrator' : 'Client' }}</span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ path('user_profile_edit') }}" class="btn btn-outline-primary">Reset password</a>
+                        <a href="{{ path('user_profile_edit') }}" class="btn btn-primary">Edit Profile</a>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-4">
+                            <div class="position-relative d-inline-block mb-3">
+                                {% if user.profilePhoto %}
+                                    <img src="{{ asset('uploads/profile_photos/' ~ user.profilePhoto) }}" alt="Profile Photo" class="img-fluid rounded-circle shadow" style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #fff;">
+                                {% else %}
+                                    <img src="{{ asset('uploads/profile_photos/default-avatar.png') }}" alt="Default Profile Photo" class="img-fluid rounded-circle shadow" style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #fff;">
+                                {% endif %}
+                            </div>
+                            <h4 class="mb-1">{{ user.nom }} {{ user.prenom }}</h4>
+                            <p class="text-muted">Joined {{ user.dateInscription|date('F Y') }}</p>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card shadow-sm border-0 mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Personal Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4 text-muted">Username</div>
+                                        <div class="col-md-8">{{ user.username }}</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4 text-muted">Email</div>
+                                        <div class="col-md-8">{{ user.email }}</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4 text-muted">Phone</div>
+                                        <div class="col-md-8">{{ user.phone ? user.phone : 'Not specified' }}</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4 text-muted">Birth Date</div>
+                                        <div class="col-md-8">{{ user.birthDate ? user.birthDate|date('F j, Y') : 'Not specified' }}</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4 text-muted">Gender</div>
+                                        <div class="col-md-8">{{ user.gender ? user.gender|capitalize : 'Not specified' }}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 text-muted">Nationality</div>
+                                        <div class="col-md-8">{{ user.nationality ? user.nationality : 'Not specified' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card shadow-sm border-0">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Address Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if user.street %}
+                                        <address class="mb-0">
+                                            {{ user.street }}<br>
+                                            {{ user.city }}, {{ user.postalCode }}<br>
+                                            {{ user.country }}
+                                        </address>
+                                    {% else %}
+                                        <p class="mb-0">No address specified</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="mt-4">
+                            <a href="{{ path('admin_users_list') }}" class="btn btn-info">Manage Users</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                    <h1 class="h3 mb-0">Edit Profile</h1>
+                    <a href="{{ path('user_profile') }}" class="btn btn-secondary">Back to Profile</a>
+                </div>
+                <div class="card-body p-4">
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+                        <div class="row">
+                            <div class="col-md-4 text-center mb-4">
+                                <div class="position-relative d-inline-block mb-3">
+                                    {% if user.profilePhoto %}
+                                        <img src="{{ asset('uploads/profile_photos/' ~ user.profilePhoto) }}" alt="Current Profile Photo" class="img-fluid rounded-circle shadow" style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #fff;">
+                                    {% else %}
+                                        <img src="{{ asset('uploads/profile_photos/default-avatar.png') }}" alt="Default Profile Photo" class="img-fluid rounded-circle shadow" style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #fff;">
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile_photo" class="form-label">Profile Photo</label>
+                                    {{ form_widget(form.profilePhoto, {'attr': {'class': 'form-control', 'accept': 'image/*'}}) }}
+                                    <small class="form-text text-muted">Upload a square image for best results</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <div class="card shadow-sm border-0 mb-4">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">Personal Information</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_widget(form.nom, {'attr': {'class': 'form-control' ~ (form.nom.vars.valid ? '' : ' is-invalid')}}) }}
+                                                {{ form_label(form.nom, 'Last Name', {'label_attr': {'class': 'form-label'}}) }}
+                                                {% if not form.nom.vars.valid %}
+                                                    <div class="invalid-feedback d-block">{{ form_errors(form.nom) }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_widget(form.prenom, {'attr': {'class': 'form-control' ~ (form.prenom.vars.valid ? '' : ' is-invalid')}}) }}
+                                                {{ form_label(form.prenom, 'First Name', {'label_attr': {'class': 'form-label'}}) }}
+                                                {% if not form.prenom.vars.valid %}
+                                                    <div class="invalid-feedback d-block">{{ form_errors(form.prenom) }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            {{ form_widget(form.username, {'attr': {'class': 'form-control' ~ (form.username.vars.valid ? '' : ' is-invalid')}}) }}
+                                            {{ form_label(form.username, 'Username', {'label_attr': {'class': 'form-label'}}) }}
+                                            {% if not form.username.vars.valid %}
+                                                <div class="invalid-feedback d-block">{{ form_errors(form.username) }}</div>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            {{ form_widget(form.email, {'attr': {'class': 'form-control' ~ (form.email.vars.valid ? '' : ' is-invalid')}}) }}
+                                            {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                                            {% if not form.email.vars.valid %}
+                                                <div class="invalid-feedback d-block">{{ form_errors(form.email) }}</div>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_widget(form.birthDate, {'attr': {'class': 'form-control' ~ (form.birthDate.vars.valid ? '' : ' is-invalid')}}) }}
+                                                {{ form_label(form.birthDate, 'Birth Date', {'label_attr': {'class': 'form-label'}}) }}
+                                                {% if not form.birthDate.vars.valid %}
+                                                    <div class="invalid-feedback d-block">{{ form_errors(form.birthDate) }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_widget(form.gender, {'attr': {'class': 'form-control' ~ (form.gender.vars.valid ? '' : ' is-invalid')}}) }}
+                                                {{ form_label(form.gender, 'Gender', {'label_attr': {'class': 'form-label'}}) }}
+                                                {% if not form.gender.vars.valid %}
+                                                    <div class="invalid-feedback d-block">{{ form_errors(form.gender) }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_widget(form.nationality, {'attr': {'class': 'form-control' ~ (form.nationality.vars.valid ? '' : ' is-invalid')}}) }}
+                                                {{ form_label(form.nationality, 'Nationality', {'label_attr': {'class': 'form-label'}}) }}
+                                                {% if not form.nationality.vars.valid %}
+                                                    <div class="invalid-feedback d-block">{{ form_errors(form.nationality) }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_widget(form.phone, {'attr': {'class': 'form-control' ~ (form.phone.vars.valid ? '' : ' is-invalid')}}) }}
+                                                {{ form_label(form.phone, 'Phone Number', {'label_attr': {'class': 'form-label'}}) }}
+                                                {% if not form.phone.vars.valid %}
+                                                    <div class="invalid-feedback d-block">{{ form_errors(form.phone) }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card shadow-sm border-0">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">Address Information</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            {{ form_widget(form.street, {'attr': {'class': 'form-control' ~ (form.street.vars.valid ? '' : ' is-invalid')}}) }}
+                                            {{ form_label(form.street, 'Street Address', {'label_attr': {'class': 'form-label'}}) }}
+                                            {% if not form.street.vars.valid %}
+                                                <div class="invalid-feedback d-block">{{ form_errors(form.street) }}</div>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                {{ form_widget(form.postalCode, {'attr': {'class': 'form-control' ~ (form.postalCode.vars.valid ? '' : ' is-invalid')}}) }}
+                                                {% if form_errors(form.postalCode) %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form_errors(form.postalCode) }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                {{ form_label(form.city, 'City', {'label_attr': {'class': 'form-label'}}) }}
+                                                {{ form_widget(form.city, {'attr': {'class': 'form-control' ~ (form_errors(form.city) ? ' is-invalid' : '')}}) }}
+                                                {% if form_errors(form.city) %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form_errors(form.city) }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                {{ form_label(form.country, 'Country', {'label_attr': {'class': 'form-label'}}) }}
+                                                {{ form_widget(form.country, {'attr': {'class': 'form-control' ~ (form_errors(form.country) ? ' is-invalid' : '')}}) }}
+                                                {% if form_errors(form.country) %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {{ form_errors(form.country) }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

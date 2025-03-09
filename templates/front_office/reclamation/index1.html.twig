@@ -1,0 +1,175 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}📌 Mes Réclamations{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-header bg-gradient-primary text-white text-center py-4">
+                <h1 class="fw-bold text-uppercase">
+                    <i class="fas fa-clipboard-list me-2"></i> Consulter Mes Réclamations
+                </h1>
+            </div>
+
+            <!-- ✅ Tableau responsive -->
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle text-center border border-dark shadow-sm">
+                        <thead class="bg-light text-dark border border-dark">
+                            <tr class="text-uppercase">
+                                <th class="py-3 border border-dark">Objet</th>
+                                <th class="py-3 border border-dark">Description</th>
+                                <th class="py-3 border border-dark">Date</th>
+                                <th class="py-3 border border-dark">Statut</th>
+                                <th class="py-3 border border-dark">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reclamation in reclamations %}
+                                <tr class="table-row border border-dark">
+                                    <td class="fw-bold text-dark border border-dark">{{ reclamation.Objet }}</td>
+                                    <td class="text-truncate text-dark fw-bold border border-dark" 
+                                        style="max-width: 250px;" title="{{ reclamation.Description }}">
+                                        {{ reclamation.Description }}
+                                    </td>
+                                    <td class="fw-semibold text-dark border border-dark">
+                                        {{ reclamation.Date ? reclamation.Date|date('d/m/Y') : '-' }}
+                                    </td>
+                                    <td class="border border-dark">
+                                        <!-- ✅ Badges PRO pour les statuts -->
+                                        <span class="badge px-3 py-2 rounded-pill fw-semibold shadow-sm
+                                            {% if reclamation.status == 'traitée' %} bg-success text-light
+                                            {% elseif reclamation.status == 'rejetée' %} bg-danger text-light
+                                            {% elseif reclamation.status == 'en cours' %} bg-warning text-dark
+                                            {% elseif reclamation.status == 'envoyée' %} bg-info text-light
+                                            {% else %} bg-secondary text-light {% endif %}
+                                        ">
+                                            <i class="fas 
+                                                {% if reclamation.status == 'traitée' %} fa-check-circle 
+                                                {% elseif reclamation.status == 'rejetée' %} fa-times-circle 
+                                                {% elseif reclamation.status == 'en cours' %} fa-hourglass-half 
+                                                {% elseif reclamation.status == 'envoyée' %} fa-paper-plane 
+                                                {% else %} fa-question-circle {% endif %}
+                                            me-2"></i> 
+                                            {{ reclamation.status | capitalize }}
+                                        </span>
+                                    </td>
+                                    <td class="border border-dark">
+                                        <a href="{{ path('app_reclamation_show_front', {'id': reclamation.id}) }}" 
+                                           class="btn btn-outline-primary btn-sm rounded-pill consulter-btn">
+                                            <i class="fas fa-eye"></i> Consulter 
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 border border-dark">
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-circle"></i> Aucune réclamation trouvée
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ Bouton "Ajouter Réclamation" CENTRÉ EN BAS -->
+        <div class="text-center mt-4">
+            <a href="{{ path('app_reclamation_newfront') }}" class="btn btn-success btn-lg rounded-pill shadow-lg ajouter-reclamation-btn">
+                <i class="fas fa-plus-circle"></i> Ajouter Réclamation
+            </a>
+        </div>
+    </div>
+
+    <!-- ✅ FontAwesome pour les icônes -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <!-- ✅ STYLES PRO -->
+    <style>
+        /* ✅ En-tête avec couleur sobre et moderne */
+        .bg-gradient-dark {
+            background: linear-gradient(135deg, #343a40, #23272b); /* Gris foncé */
+            border-radius: 15px 15px 0 0;
+        }
+
+        /* ✅ Tableau avec effet hover fluide */
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            transition: all 0.3s ease-in-out;
+            transform: scale(1.01);
+        }
+
+        /* ✅ Bordures élégantes */
+        .table {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-bordered td, .table-bordered th {
+            border: 2px solid #343a40 !important;
+        }
+
+        /* ✅ Badges statuts ultra PRO */
+        .badge {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+
+        /* ✅ Couleurs statuts améliorées */
+        .bg-warning { background-color: #ffae00 !important; color: #333; }
+        .bg-success { background-color: #198754 !important; }
+        .bg-danger { background-color: #dc3545 !important; }
+        .bg-info { background-color: #0dcaf0 !important; }
+        .bg-secondary { background-color: #6c757d !important; }
+
+        /* ✅ Bouton "Ajouter Réclamation" CENTRÉ EN BAS */
+        .ajouter-reclamation-btn {
+            display: block;
+            width: fit-content;
+            margin: 0 auto;
+            background-color: #28a745;
+            transition: all 0.3s ease-in-out;
+            padding: 14px 28px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .ajouter-reclamation-btn:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* ✅ Bouton "Consulter" avec effet */
+        .consulter-btn {
+            font-weight: bold;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .consulter-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* ✅ Responsive - Ajustement */
+        @media (max-width: 768px) {
+            .badge {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+
+            .btn-lg {
+                font-size: 16px;
+                padding: 12px 24px;
+            }
+
+            .ajouter-reclamation-btn {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,57 @@
+{{ form_start(form, { 'attr': { 'novalidate': 'novalidate', 'class': 'needs-validation' } }) }}
+
+{% if form.vars.errors|length > 0 %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for error in form.vars.errors %}
+                <li>{{ error.message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+ {# Champ "reponse" #}
+ <div class="mb-3">
+    {{ form_label(form.reponse, null, { 'label_attr': { 'class': 'form-label fw-bold' } }) }}
+    {{ form_widget(form.reponse, { 'attr': { 'class': 'form-control' } }) }}
+    
+    {% if form.reponse.vars.errors|length > 0 %}
+        <div class="text-danger mt-1">
+            {% for error in form.reponse.vars.errors %}
+                <small>{{ error.message }}</small>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+{# Champ "Date" #}
+<div class="mb-3">
+    {{ form_label(form.Date, null, { 'label_attr': { 'class': 'form-label fw-bold' } }) }}
+    {{ form_widget(form.Date, { 'attr': { 'class': 'form-control' } }) }}
+    
+    {% if form.Date.vars.errors|length > 0 %}
+        <div class="text-danger mt-1">
+            {% for error in form.Date.vars.errors %}
+                <small>{{ error.message }}</small>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+{# Champ "reclamation" #}
+<div class="mb-3">
+    {{ form_label(form.reclamation, null, { 'label_attr': { 'class': 'form-label fw-bold' } }) }}
+    {{ form_widget(form.reclamation, { 'attr': { 'class': 'form-select' } }) }}
+    
+    {% if form.reclamation.vars.errors|length > 0 %}
+        <div class="text-danger mt-1">
+            {% for error in form.reclamation.vars.errors %}
+                <small>{{ error.message }}</small>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<button type="submit" class="btn btn-primary w-100">{{ button_label|default('Enregistrer') }}</button>
+
+{{ form_end(form) }}

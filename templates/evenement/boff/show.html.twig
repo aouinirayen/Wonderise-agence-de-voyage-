@@ -1,0 +1,107 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Détails de l'événement{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .btn-delete {
+            background: #dc3545;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-delete::before {
+            content: "Êtes-vous sûr ?";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #c82333;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .btn-delete:hover::before {
+            transform: translateX(0);
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+        }
+        
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        
+        .btn-action i {
+            margin-right: 0.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    {% if evenement.photo %}
+                            <img src="{{ asset('uploads/photos/' ~ evenement.photo) }}" class="card-img-top" alt="{{ evenement.nom }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h1 class="card-title">{{ evenement.nom }}</h1>
+                        
+                        <div class="mb-3">
+                            <span class="badge bg-primary">{{ evenement.categorie|capitalize }}</span>
+                            <span class="badge bg-info">{{ evenement.pays }}</span>
+                            <span class="badge {% if evenement.status == 'annule' %}bg-danger{% elseif evenement.status == 'termine' %}bg-secondary{% else %}bg-success{% endif %}">
+                                {{ evenement.status|capitalize }}
+                            </span>
+                        </div>
+
+                        <div class="card-text">
+                            <p><strong>Description:</strong><br>{{ evenement.description }}</p>
+                            
+                            <p>
+                                <strong>Date:</strong> {{ evenement.date|date('d/m/Y') }}<br>
+                                <strong>Heure:</strong> {{ evenement.heure|date('H:i') }}<br>
+                                <strong>Lieu:</strong> {{ evenement.lieu }}<br>
+                                <strong>Prix:</strong> {{ evenement.prix }}€<br>
+                                <strong>Places disponibles:</strong> {{ evenement.placeMax }}
+                            </p>
+
+                            <p>
+                                <strong>Guide:</strong> {{ evenement.guide.nom }}
+                            </p>
+                        </div>
+
+                        <div class="mt-4">
+                            <a href="{{ path('app_evenement_index1') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour à la liste
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

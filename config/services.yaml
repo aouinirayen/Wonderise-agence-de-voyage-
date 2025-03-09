@@ -1,0 +1,58 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+parameters:
+    profile_photos_directory: '%kernel.project_dir%/public/uploads/profile_photos'
+    fonts_directory: '%kernel.project_dir%/public/fonts'
+    images_directory: '%kernel.project_dir%/public/uploads/images'
+    photos_directory: '%kernel.project_dir%/public/uploads/photos'
+    app.openweathermap.api_key: '%env(OPENWEATHERMAP_API_KEY)%'
+    
+    stripe_public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
+    google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+
+services:
+    # Default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # Makes classes in src/ available to be used as services
+    # This creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Kernel.php'
+
+    # Custom service definitions
+    App\Service\ImageWatermarkService:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
+    App\Service\WeatherService:
+        arguments:
+            $httpClient: '@http_client'
+            $logger: '@logger'
+
+    App\WeatherBundle\Service\WeatherService:
+        arguments:
+            $httpClient: '@http_client'
+            $apiKey: '%app.openweathermap.api_key%'
+            $logger: '@logger'  # Fixed missing closing quote
+
+    App\Service\SentimentAnalysisService:
+        public: true
+
+    App\Service\BotManFactoryService:
+        arguments:
+            $cache: '@cache.app'
+
+    # ✅ Corrected Karser Recaptcha3 Service Definition
+    Karser\Recaptcha3Bundle\Form\Recaptcha3Type:
+        class: Karser\Recaptcha3Bundle\Form\Recaptcha3Type
+        arguments:
+            $siteKey: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+            $host: '%env(GOOGLE_RECAPTCHA_HOST)%'
+            $enabled: '%env(bool:GOOGLE_RECAPTCHA_ENABLED)%'

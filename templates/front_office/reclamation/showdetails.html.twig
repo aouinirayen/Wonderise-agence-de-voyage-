@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la Réclamation{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body">
+            <h1 class="text-center mb-4 text-primary fw-bold">📌 Détails de la Réclamation</h1>
+            
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Objet :</strong> {{ reclamation.Objet }}</li>
+                <li class="list-group-item"><strong>Description :</strong> {{ reclamation.Description }}</li>
+                <li class="list-group-item"><strong>Date :</strong> {{ reclamation.Date ? reclamation.Date|date('d/m/Y') : '-' }}</li>
+                <li class="list-group-item"><strong>Statut :</strong> 
+                    <span class="badge 
+                        {% if reclamation.status == 'traitée' %} bg-success
+                        {% elseif reclamation.status == 'rejetée' %} bg-danger
+                        {% elseif reclamation.status== 'en cours' %} bg-warning text-dark
+                        {% elseif reclamation.status == 'envoyée' %} bg-secondary {% endif %}">
+                        {{ reclamation.status}}
+                    </span>
+                </li>
+            </ul>
+
+            <div class="mt-4">
+                <a href="{{ path('app_reclamation_index1') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Nouvelle Offre | Wonder Admin{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form-error {
+            color: #dc3545; /* Red color */
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-error-list {
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .form-error-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .custom-file-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+
+        .required:after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 4px;
+        }
+    </style>
+{% endblock %}
+
+{% block content_header %}
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Nouvelle Offre</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ path('admin_offre_index') }}">Offres</a></li>
+                    <li class="breadcrumb-item active">Nouvelle Offre</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                            
+                            <!-- Informations générales -->
+                            <div class="form-section">
+                                <h3 class="form-section-title">Informations générales</h3>
+                                
+                                <div class="mb-3">
+                                    {{ form_label(form.titre, 'Titre', {'label_attr': {'class': 'required'}}) }}
+                                    {{ form_widget(form.titre, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le titre de l\'offre'}}) }}
+                                    {{ form_errors(form.titre, {'attr': {'class': 'form-error'}}) }}
+                                    <small class="form-text text-muted">Le titre doit être clair et attractif</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(form.description, 'Description', {'label_attr': {'class': 'required'}}) }}
+                                    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '5', 'placeholder': 'Décrivez votre offre en détail'}}) }}
+                                    {{ form_errors(form.description, {'attr': {'class': 'form-error'}}) }}
+                                </div>
+                            </div>
+
+                            <!-- Prix et disponibilité -->
+                            <div class="form-section">
+                                <h3 class="form-section-title">Prix et disponibilité</h3>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            {{ form_label(form.prix, 'Prix par personne (€)', {'label_attr': {'class': 'required'}}) }}
+                                            {{ form_widget(form.prix, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
+                                            {{ form_errors(form.prix, {'attr': {'class': 'form-error'}}) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            {{ form_label(form.nombrePlaces, 'Nombre de places', {'label_attr': {'class': 'required'}}) }}
+                                            {{ form_widget(form.nombrePlaces, {'attr': {'class': 'form-control', 'min': '1'}}) }}
+                                            {{ form_errors(form.nombrePlaces, {'attr': {'class': 'form-error'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-section">
+                                <h3 class="form-section-title">Période de l'offre</h3>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            {{ form_label(form.dateDebut, 'Date de début', {'label_attr': {'class': 'required'}}) }}
+                                            {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.dateDebut, {'attr': {'class': 'form-error'}}) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            {{ form_label(form.dateFin, 'Date de fin', {'label_attr': {'class': 'required'}}) }}
+                                            {{ form_widget(form.dateFin, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.dateFin, {'attr': {'class': 'form-error'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                            <!-- Image -->
+                            <div class="form-section">
+                                <h3 class="form-section-title">Image</h3>
+                                
+                                <div class="mb-3">
+                                    {{ form_label(form.imageFile, 'Image de l\'offre') }}
+                                    {{ form_widget(form.imageFile, {'attr': {'class': 'form-control', 'accept': 'image/*'}}) }}
+                                    {{ form_errors(form.imageFile, {'attr': {'class': 'form-error'}}) }}
+                                    <small class="form-text text-muted">Format recommandé : JPG ou PNG, max 2MB</small>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Créer l'offre
+                                </button>
+                                <a href="{{ path('admin_offre_index') }}" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Annuler
+                                </a>
+                            </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Aide</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info mb-3">
+                            <h5><i class="fas fa-info-circle"></i> Conseils</h5>
+                            <ul class="mb-0">
+                                <li>Le titre doit être concis et descriptif</li>
+                                <li>La description doit être détaillée et attractive</li>
+                                <li>Le prix doit être compétitif</li>
+                                <li>Une belle image augmente les chances de réservation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Preview de l'image
+        document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.createElement('img');
+                    preview.src = e.target.result;
+                    preview.className = 'preview-image';
+                    
+                    const container = document.querySelector('input[type="file"]').parentNode;
+                    const oldPreview = container.querySelector('.preview-image');
+                    if (oldPreview) {
+                        container.removeChild(oldPreview);
+                    }
+                    container.appendChild(preview);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+{% endblock %}

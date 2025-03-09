@@ -1,0 +1,276 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Dashboard - User Distribution{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/jqvmap.min.css">
+    <style>
+        .info-box {
+            min-height: 100px;
+            background: #fff;
+            width: 100%;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+        .info-box-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            float: left;
+            height: 70px;
+            width: 70px;
+            text-align: center;
+            font-size: 30px;
+            line-height: 70px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        .info-box-icon i {
+            color: #fff;
+        }
+        .info-box-content {
+            padding: 5px 10px;
+            margin-left: 80px;
+        }
+        .info-box-text {
+            display: block;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+        }
+        .info-box-number {
+            display: block;
+            font-weight: bold;
+            font-size: 24px;
+        }
+        .bg-info { background-color: #17a2b8 !important; }
+        .bg-success { background-color: #28a745 !important; }
+        .bg-warning { background-color: #ffc107 !important; }
+        .bg-danger { background-color: #dc3545 !important; }
+        #vmap {
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            background-color: #f8f9fa;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            border-radius: 8px;
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid rgba(0,0,0,.125);
+            padding: 1.25rem;
+        }
+        .card-title {
+            margin: 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">User Distribution Dashboard</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">User Distribution</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="content">
+            <div class="container-fluid">
+                <!-- Info boxes -->
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-info">
+                                <i class="fas fa-users"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Total Users</span>
+                                <span class="info-box-number total-users">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-success">
+                                <i class="fas fa-globe"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Countries</span>
+                                <span class="info-box-number total-countries">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-warning">
+                                <i class="fas fa-user-plus"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">New Users (24h)</span>
+                                <span class="info-box-number new-users">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-danger">
+                                <i class="fas fa-chart-pie"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Active Users</span>
+                                <span class="info-box-number active-users">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-globe mr-2"></i>
+                                    Global User Distribution
+                                </h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="vmap" style="height: 500px; width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/jquery.vmap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/maps/jquery.vmap.world.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+            if (typeof jQuery != 'undefined') {
+                console.log('jQuery is loaded');
+                setTimeout(initializeMap, 500);
+                updateStatistics();
+            } else {
+                console.error('jQuery is not loaded');
+            }
+        });
+
+        function updateStatistics() {
+            var userData = {{ userLocations|raw }};
+            var totalUsers = 0;
+            var countries = 0;
+
+            // Calculer les statistiques
+            for (var country in userData) {
+                if (userData.hasOwnProperty(country)) {
+                    totalUsers += userData[country];
+                    countries++;
+                }
+            }
+
+            // Mettre à jour les compteurs avec animation
+            animateCounter('.total-users', totalUsers);
+            animateCounter('.total-countries', countries);
+            animateCounter('.new-users', Math.floor(totalUsers * 0.1)); // Exemple: 10% sont nouveaux
+            animateCounter('.active-users', Math.floor(totalUsers * 0.8)); // Exemple: 80% sont actifs
+        }
+
+        function animateCounter(selector, end) {
+            var $counter = jQuery(selector);
+            var start = 0;
+            var duration = 1000;
+            var startTime = null;
+
+            function animation(currentTime) {
+                if (!startTime) startTime = currentTime;
+                var timeElapsed = currentTime - startTime;
+                var progress = Math.min(timeElapsed / duration, 1);
+
+                var current = Math.floor(progress * (end - start) + start);
+                $counter.text(current.toLocaleString());
+
+                if (progress < 1) {
+                    requestAnimationFrame(animation);
+                }
+            }
+
+            requestAnimationFrame(animation);
+        }
+
+        function initializeMap() {
+            try {
+                console.log('Map initialization starting...');
+                var userData = {{ userLocations|raw }};
+                console.log('User data:', userData);
+
+                if (!jQuery('#vmap').length) {
+                    console.error('Map container not found');
+                    return;
+                }
+
+                jQuery('#vmap').vectorMap({
+                    map: 'world_en',
+                    backgroundColor: '#f8f9fa',
+                    color: '#ffffff',
+                    hoverOpacity: 0.7,
+                    selectedColor: '#666666',
+                    enableZoom: true,
+                    showTooltip: true,
+                    scaleColors: ['#C8EEFF', '#0071A4'],
+                    values: userData,
+                    normalizeFunction: 'polynomial',
+                    onLabelShow: function(event, label, code) {
+                        if (userData[code]) {
+                            label.html(
+                                '<div class="map-tooltip">' +
+                                '<strong>' + label.html() + '</strong><br>' +
+                                'Users: ' + userData[code].toLocaleString() +
+                                '</div>'
+                            );
+                        } else {
+                            label.html(
+                                '<div class="map-tooltip">' +
+                                '<strong>' + label.html() + '</strong><br>' +
+                                'Users: 0' +
+                                '</div>'
+                            );
+                        }
+                    }
+                });
+                console.log('Map initialized successfully');
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                console.error(error.stack);
+            }
+        }
+    </script>
+{% endblock %}

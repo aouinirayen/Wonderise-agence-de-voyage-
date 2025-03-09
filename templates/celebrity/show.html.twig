@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ celebrity.name }} - Celebrity Details{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h1 class="card-title mb-0 text-white">{{ celebrity.name }}</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    {% if celebrity.img %}
+             <img class="img-fluid w-100 rounded-top" src="{{ asset('uploads/images/' ~ celebrity.img) }}" alt="{{ celebrity.name }}" style="height: 50%; object-fit: cover;">
+                    {% else %}
+                        <div class="alert alert-warning text-center">
+                            <p class="mb-0">No image available</p>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <p class="lead">{{ celebrity.description }}</p>
+                    <div class="mt-4">
+                        <h2 class="h4 text-secondary">Job</h2>
+                        <p class="text-muted">{{ celebrity.work }}</p>
+                    </div>
+                    <div class="mt-4">
+                        <h2 class="h4 text-secondary">Country</h2>
+                        <p class="text-muted">{{ celebrity.country.name }}</p>
+                    </div>
+                    <div class="mt-4">
+                        <h2 class="h4 text-secondary">Date of Birth</h2>
+                        <p class="text-muted">{{ celebrity.dateOfBirth|date('F j, Y') }}</p>
+                    </div>
+                    <div class="mt-4">
+                        <h2 class="h4 text-secondary">Nationality</h2>
+                        <p class="text-muted">{{ celebrity.nationality }}</p>
+                    </div>
+                    <div class="mt-4">
+                        <h2 class="h4 text-secondary">Notable Works</h2>
+                        <p class="text-muted">{{ celebrity.notableWorks }}</p>
+                    </div>
+                    <div class="mt-4">
+                        <h2 class="h4 text-secondary">Personal Life</h2>
+                        <p class="text-muted">{{ celebrity.personalLife }}</p>
+                    </div>
+                    <div class="mt-4">
+                        <h2 class="h4 text-secondary">Net Worth</h2>
+                        <p class="text-muted">{{ celebrity.netWorth }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-light">
+           
+        </div>
+    </div>
+</div>
+{% endblock %}

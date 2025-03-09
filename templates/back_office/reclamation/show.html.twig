@@ -1,0 +1,103 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}📢 Détails de la Réclamation{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h1 class="h4">📢 Détails de la Réclamation</h1>
+            </div>
+            <div class="card-body bg-white">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th>ID</th>
+                            <td>{{ reclamation.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Objet</th>
+                            <td>{{ reclamation.objet }}</td>
+                        </tr>
+                        <tr>
+                            <th>Description</th>
+                            <td>{{ reclamation.description }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date</th>
+                            <td>{{ reclamation.date ? reclamation.date|date('Y-m-d') : 'Non spécifiée' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Statut</th>
+                            <td>
+                                <span class="badge px-3 py-2 fw-bold text-uppercase
+                                    {% if reclamation.status == 'traitée' %} bg-success text-light
+                                    {% elseif reclamation.status == 'rejetée' %} bg-danger text-light
+                                    {% elseif reclamation.status == 'en cours' %} bg-warning text-dark
+                                    {% elseif reclamation.status == 'envoyée' %} bg-info text-light
+                                    {% else %} bg-secondary text-light {% endif %}">
+                                    
+                                    <i class="fas 
+                                        {% if reclamation.status == 'traitée' %} fa-check-circle
+                                        {% elseif reclamation.status == 'rejetée' %} fa-times-circle
+                                        {% elseif reclamation.status == 'en cours' %} fa-hourglass-half
+                                        {% elseif reclamation.status == 'envoyée' %} fa-paper-plane
+                                        {% else %} fa-question-circle {% endif %}
+                                    me-2"></i> 
+                                    {{ reclamation.status | capitalize }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Client ID</th>
+                            <td>{{ reclamation.user }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h2 class="mt-5 mb-3">📝 Liste des Réponses</h2>
+                {% if reclamation.reponses is not empty %}
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Contenu</th>
+                                <th>Date de Réponse</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reponse in reclamation.reponses %}
+                                <tr>
+                                    <td>{{ reponse.id }}</td>
+                                    <td>{{ reponse.reponse }}</td>
+                                    <td>{{ reponse.date ? reponse.date|date('Y-m-d') : 'Non spécifiée' }}</td>
+                                    <td>
+                                        <a href="{{ path('app_reponse_edit', { id: reponse.id }) }}" class="btn btn-warning btn-sm">
+                                            ✏️ Modifier
+                                        </a>
+                                        <form method="post" action="{{ path('app_reponse_delete', { id: reponse.id }) }}" style="display:inline;" onsubmit="return confirm('Voulez-vous vraiment supprimer cette réponse ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reponse.id) }}">
+                                            <button class="btn btn-danger btn-sm">🗑️ Supprimer</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-muted">Aucune réponse pour cette réclamation.</p>
+                {% endif %}
+                
+                <div class="text-center mt-4">
+                    <a href="{{ path('app_reclamation_index') }}" class="btn btn-secondary btn-lg">
+                        ⬅️ Retour à la liste des réclamations
+                    </a>
+                    <a href="{{ path('app_reponse_new', { reclamationId: reclamation.id }) }}" class="btn btn-success btn-lg mx-3">
+                        ➕ Ajouter une nouvelle réponse
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

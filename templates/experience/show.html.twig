@@ -1,0 +1,387 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ experience.titre }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .sentiment-badge {
+            padding: 0.35em 0.65em;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+            margin-left: 0.5rem;
+        }
+        .sentiment-score {
+            margin-top: 0.5rem;
+            height: 4px;
+            background-color: #e9ecef;
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+        .sentiment-score .progress-bar {
+            height: 100%;
+            border-radius: 0.25rem;
+            transition: width .6s ease;
+        }
+        .star-rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stars {
+            display: inline-flex;
+            gap: 0.25rem;
+        }
+
+        .stars i {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .stars i:hover {
+            transform: scale(1.2);
+        }
+
+        .aqi-status {
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+        }
+
+        .aqi-good {
+            background-color: #00e400;
+        }
+
+        .aqi-moderate {
+            background-color: #ffff00;
+            color: #333;
+        }
+
+        .aqi-unhealthy-for-sensitive-groups {
+            background-color: #ff7e00;
+        }
+
+        .aqi-unhealthy {
+            background-color: #ff0000;
+        }
+
+        .aqi-very-unhealthy {
+            background-color: #8f3f97;
+        }
+
+        .aqi-hazardous {
+            background-color: #7e0023;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="card-title">{{ experience.titre }}</h1>
+                
+                {% if experience.url %}
+                    <img src="{{ experience.url }}" class="img-fluid mb-4 rounded" alt="Experience image">
+                {% endif %}
+
+                <div class="mb-4">
+                    <p class="text-muted">
+                        <i class="bi bi-calendar"></i> {{ experience.date|date('F d, Y') }}
+                        {% if experience.lieu %}
+                            <span class="ms-3"><i class="bi bi-geo-alt"></i> {{ experience.lieu }}</span>
+                        {% endif %}
+                        {% if experience.categorie %}
+                            <span class="ms-3"><i class="bi bi-tag"></i> {{ experience.categorie }}</span>
+                        {% endif %}
+                    </p>
+                    <p class="lead">{{ experience.description }}</p>
+                </div>
+
+                {% if experience.airQualityData is defined and experience.airQualityData is not empty %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-wind"></i> Air Quality in {{ experience.lieu }}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if experience.airQualityData.error is defined %}
+                                <div class="alert alert-warning">
+                                    {{ experience.airQualityData.error }}
+                                </div>
+                            {% else %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="aqi-status aqi-{{ experience.airQualityData.status|lower|replace({' ': '-'}) }}">
+                                            <h3 class="mb-3">Air Quality Index: {{ experience.airQualityData.overall_aqi }}</h3>
+                                            <p class="mb-0">Status: {{ experience.airQualityData.status }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Pollutant Details:</h5>
+                                        <ul class="list-unstyled">
+                                            {% for pollutant, data in experience.airQualityData.concentration %}
+                                                {% if data.aqi is defined %}
+                                                    <li>
+                                                        <strong>{{ pollutant }}:</strong> 
+                                                        AQI: {{ data.aqi }} 
+                                                        ({{ data.concentration|number_format(2) }} μg/m³)
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="{{ path('app_experience_index') }}" class="btn btn-outline-secondary me-2">
+                            <i class="bi bi-arrow-left"></i> Back to List
+                        </a>
+                        <a href="{{ path('app_experience_edit', {'id': experience.id}) }}" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                    </div>
+                    {{ include('experience/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <h1>{{ experience.titre }}</h1>
+                    
+                    <div class="rating-section mb-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <button class="btn btn-outline-primary btn-sm" onclick="rateExperience('like')">
+                                <i class="fas fa-thumbs-up"></i> <span id="likes-count">0</span>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" onclick="rateExperience('dislike')">
+                                <i class="fas fa-thumbs-down"></i> <span id="dislikes-count">0</span>
+                            </button>
+                            <div class="star-rating">
+                                <span>Rating: </span>
+                                <span id="average-rating">0</span>/5
+                                (
+                                <span id="rating-count">0</span> ratings)
+                                <div class="stars">
+                                    {% for i in 1..5 %}
+                                        <i class="far fa-star" data-rating="{{ i }}" onclick="rateExperience('rating', {{ i }})"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="card mt-4 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title">Comments</h3>
+                
+                <!-- Comment Form -->
+                {{ form_start(commentForm) }}
+                    <div class="mb-3">
+                        {{ form_row(commentForm.auteur, {'attr': {'class': 'form-control', 'placeholder': 'Your name'}}) }}
+                        {{ form_row(commentForm.contenu, {'attr': {'class': 'form-control', 'rows': 3, 'placeholder': 'Your comment'}}) }}
+                    </div>
+                    {{ form_row(commentForm.submit, {'attr': {'class': 'btn btn-primary'}}) }}
+                {{ form_end(commentForm) }}
+
+                <!-- Comments List -->
+                {% for comment in experience.commentaires %}
+                    <div class="comment mb-3 p-3 border rounded">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ comment.auteur }}</strong>
+                            <small class="text-muted">{{ comment.date|date('M d, Y H:i') }}</small>
+                        </div>
+                        <p class="mb-2">{{ comment.contenu }}</p>
+                        
+                        {% if comment.sentiment is not null %}
+                            <div class="sentiment-badge">
+                                {% if comment.sentiment == 'positif' %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-smile"></i> Positif
+                                    </span>
+                                {% elseif comment.sentiment == 'négatif' %}
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-frown"></i> Négatif
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-meh"></i> Neutre
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if comment.sentimentScore is not null %}
+                            <div class="sentiment-score">
+                                <div class="progress-bar {{ comment.sentimentScore > 0 ? 'bg-success' : 'bg-danger' }}"
+                                     role="progressbar"
+                                     style="width: {{ (comment.sentimentScore|abs * 100)|round }}%">
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editCommentModal{{ comment.id }}">
+                                Edit
+                            </button>
+                            <form method="post" action="{{ path('commentaire_delete', {'id': comment.id}) }}" onsubmit="return confirm('Are you sure you want to delete this comment?');" class="d-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Edit Comment Modal -->
+                    <div class="modal fade" id="editCommentModal{{ comment.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit Comment</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form method="post" action="{{ path('commentaire_edit', {'id': comment.id}) }}">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="edit_content{{ comment.id }}" class="form-label">Comment</label>
+                                            <textarea class="form-control" id="edit_content{{ comment.id }}" name="contenu" rows="3" required>{{ comment.contenu }}</textarea>
+                                        </div>
+                                        <input type="hidden" name="_token" value="{{ csrf_token('edit' ~ comment.id) }}">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No comments yet. Be the first to comment!</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('js/voiceRecorder.js') }}"></script>
+<script>
+function rateExperience(type, value = null) {
+    console.log('Rating experience:', type, value);
+    fetch(`/rating/experience/{{ experience.getId() }}/rate`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token('rate') }}'
+        },
+        body: JSON.stringify({ type, value })
+    })
+    .then(response => {
+        console.log('Response:', response);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Data:', data);
+        if (data.error) {
+            alert(data.error);
+        } else {
+            updateStats();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while rating: ' + error.message);
+    });
+}
+
+function updateStats() {
+    console.log('Updating stats');
+    fetch(`/rating/experience/{{ experience.getId() }}/stats`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(stats => {
+            console.log('Stats:', stats);
+            document.getElementById('likes-count').textContent = stats.likes;
+            document.getElementById('dislikes-count').textContent = stats.dislikes;
+            document.getElementById('average-rating').textContent = stats.rating.average;
+            document.getElementById('rating-count').textContent = stats.rating.count;
+            
+            // Update stars
+            const stars = document.querySelectorAll('.stars i');
+            stars.forEach((star, index) => {
+                if (index < stats.rating.average) {
+                    star.className = 'fas fa-star text-warning';
+                } else {
+                    star.className = 'far fa-star';
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error updating stats:', error);
+            alert('An error occurred while updating stats: ' + error.message);
+        });
+}
+
+// Load initial stats
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Loading initial stats');
+    updateStats();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize voice recorder for comments
+    const commentTextArea = document.querySelector('#commentaire_contenu');
+    const commentRecordBtn = document.createElement('button');
+    commentRecordBtn.type = 'button';
+    commentRecordBtn.className = 'voice-record-btn';
+    commentRecordBtn.innerHTML = '<i class="fas fa-microphone"></i> Start Recording';
+    
+    const commentStatusElement = document.createElement('div');
+    commentStatusElement.className = 'voice-record-status';
+    
+    commentTextArea.parentNode.insertBefore(commentRecordBtn, commentTextArea.nextSibling);
+    commentTextArea.parentNode.insertBefore(commentStatusElement, commentRecordBtn.nextSibling);
+    
+    new VoiceRecorder(commentTextArea, commentRecordBtn, commentStatusElement);
+    
+    // Initialize voice recorder for description (if in edit mode)
+    const descriptionTextArea = document.querySelector('#experience_description');
+    if (descriptionTextArea) {
+        const descriptionRecordBtn = document.createElement('button');
+        descriptionRecordBtn.type = 'button';
+        descriptionRecordBtn.className = 'voice-record-btn';
+        descriptionRecordBtn.innerHTML = '<i class="fas fa-microphone"></i> Start Recording';
+        
+        const descriptionStatusElement = document.createElement('div');
+        descriptionStatusElement.className = 'voice-record-status';
+        
+        descriptionTextArea.parentNode.insertBefore(descriptionRecordBtn, descriptionTextArea.nextSibling);
+        descriptionTextArea.parentNode.insertBefore(descriptionStatusElement, descriptionRecordBtn.nextSibling);
+        
+        new VoiceRecorder(descriptionTextArea, descriptionRecordBtn, descriptionStatusElement);
+    }
+});
+</script>
+{% endblock %}

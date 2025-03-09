@@ -1,0 +1,314 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Nouvel Événement{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .event-form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background-color: #fde8e8;
+            border: 1px solid #fecaca;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .form-group.has-error .form-control {
+            border-color: #dc3545;
+        }
+
+        .required-field::after {
+            content: '*';
+            color: #dc3545;
+            margin-left: 4px;
+        }
+
+        .help-text {
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            color: #666;
+            text-decoration: none;
+            margin-bottom: 2rem;
+        }
+
+        .btn-back i {
+            margin-right: 0.5rem;
+        }
+
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+
+        .alert-error {
+            background-color: #ffebeb;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+        }
+
+        .alert-error ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .alert-error li {
+            color: #dc3545;
+            padding-left: 15px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+        .alert-error li:before {
+            content: "•";
+            color: #dc3545;
+            position: absolute;
+            left: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <a href="{{ path('app_evenement_index1') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Retour à la liste
+        </a>
+
+        <div class="event-form-container">
+            <div class="form-header">
+                <h1>Créer un nouvel événement</h1>
+                <p class="text-muted">Remplissez les informations ci-dessous pour créer un nouvel événement</p>
+            </div>
+
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="form-row">
+                <div class="form-group {{ form_errors(form.nom) ? 'has-error' : '' }}">
+                    {{ form_label(form.nom, 'Nom de l\'événement', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.nom.vars.valid %}
+                        <div class="alert-error">
+                            <ul>
+                                {% for error in form.nom.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group {{ form_errors(form.guide) ? 'has-error' : '' }}">
+                    {{ form_label(form.guide, 'Guide responsable', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.guide, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.guide.vars.valid %}
+                        <div class="alert-error">
+                            <ul>
+                                {% for error in form.guide.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group {{ form_errors(form.description) ? 'has-error' : '' }}">
+                {{ form_label(form.description, 'Description de l\'événement', {'label_attr': {'class': 'required-field'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                {% if not form.description.vars.valid %}
+                    <div class="alert-error">
+                        <ul>
+                            {% for error in form.description.vars.errors %}
+                                <li>{{ error.message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                <div class="help-text">Décrivez l'événement en détail pour informer les participants.</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.date, 'Date de l\'événement', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.date, {
+                        'attr': {
+                            'class': 'form-control',
+                            'min': "now"|date("Y-m-d")
+                        }
+                    }) }}
+                    {% if not form.date.vars.valid %}
+                        <div class="alert-error">
+                            <ul>
+                                {% for error in form.date.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.heure, 'Heure de l\'événement', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.heure, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.heure.vars.valid %}
+                        <div class="alert-error">
+                            <ul>
+                                <li>{{ form.heure.vars.errors[0].message }}</li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group {{ form_errors(form.lieu) ? 'has-error' : '' }}">
+                    {{ form_label(form.lieu, 'Lieu', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.lieu, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.lieu.vars.valid %}
+                        <div class="alert-error">
+                            <ul>
+                                {% for error in form.lieu.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group {{ form_errors(form.placeMax) ? 'has-error' : '' }}">
+                    {{ form_label(form.placeMax, 'Nombre de places', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.placeMax, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.placeMax.vars.valid %}
+                        <div class="alert-error">
+                            <ul>
+                                {% for error in form.placeMax.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group {{ form_errors(form.prix) ? 'has-error' : '' }}">
+                    {{ form_label(form.prix, 'Prix', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.prix, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.prix.vars.valid %}
+                        <div class="alert-error">
+                            <ul>
+                                {% for error in form.prix.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    <div class="help-text">Prix en euros (€)</div>
+                </div>
+
+                <div class="form-group {{ form_errors(form.status) ? 'has-error' : '' }}">
+                    {{ form_label(form.status, 'Statut de l\'événement', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
+                    {% if not form.status.vars.valid %}
+                        <div class="alert-error">
+                            <ul>
+                                {% for error in form.status.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group {{ form_errors(form.photo) ? 'has-error' : '' }}">
+                {{ form_label(form.photo, 'Photo de l\'événement') }}
+                {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+                {% if not form.photo.vars.valid %}
+                    <div class="alert-error">
+                        <ul>
+                            {% for error in form.photo.vars.errors %}
+                                <li>{{ error.message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                <div class="help-text">Format accepté : JPEG ou PNG, taille maximale : 1 Mo</div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-plus-circle me-2"></i>
+                Créer l'événement
+            </button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

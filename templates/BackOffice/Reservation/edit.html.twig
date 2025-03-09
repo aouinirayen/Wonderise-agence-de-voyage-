@@ -1,0 +1,120 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Modifier la Réservation | Wonder Admin{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .form-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        .form-section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .form-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .form-error-list {
+            padding-left: 0;
+            list-style: none;
+        }
+        .form-error-list li {
+            margin-bottom: 0.5rem;
+        }
+        .required:after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 4px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <h1 class="my-4">Modifier la réservation de {{ reservation.nom }} {{ reservation.prenom }}</h1>
+        
+        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'required'}}) }}
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le nom'}}) }}
+                        {{ form_errors(form.nom) }}
+                        <small class="form-text text-muted">Le nom doit être clair et attractif</small>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.prenom, 'Prénom', {'label_attr': {'class': 'required'}}) }}
+                        {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le prénom'}}) }}
+                        {{ form_errors(form.prenom) }}
+                        <small class="form-text text-muted">Le prénom doit être clair et attractif</small>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.email, 'Email', {'label_attr': {'class': 'required'}}) }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Entrez l\'email'}}) }}
+                        {{ form_errors(form.email) }}
+                        <small class="form-text text-muted">L'email doit être valide</small>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.telephone, 'Téléphone', {'label_attr': {'class': 'required'}}) }}
+                        {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le numéro de téléphone'}}) }}
+                        {{ form_errors(form.telephone) }}
+                        <small class="form-text text-muted">Le numéro de téléphone doit être valide</small>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form_label(form.ville, 'Ville', {'label_attr': {'class': 'required'}}) }}
+                        {{ form_widget(form.ville, {'attr': {'class': 'form-control', 'placeholder': 'Entrez la ville'}}) }}
+                        {{ form_errors(form.ville) }}
+                        <small class="form-text text-muted">La ville doit être valide</small>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.nombrePersonne, 'Nombre de personnes', {'label_attr': {'class': 'required'}}) }}
+                        {{ form_widget(form.nombrePersonne, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le nombre de personnes'}}) }}
+                        {{ form_errors(form.nombrePersonne) }}
+                        <small class="form-text text-muted">Le nombre de personnes doit être valide</small>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.mode_paiement, 'Mode de paiement', {'label_attr': {'class': 'required'}}) }}
+                        {{ form_widget(form.mode_paiement, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.mode_paiement) }}
+                        <small class="form-text text-muted">Sélectionnez votre mode de paiement préféré</small>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.commentaire, 'Commentaire') }}
+                        {{ form_widget(form.commentaire, {'attr': {'class': 'form-control', 'placeholder': 'Ajoutez un commentaire si nécessaire...', 'rows': 3}}) }}
+                        {{ form_errors(form.commentaire) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Enregistrer les modifications
+                </button>
+                <a href="{{ path('admin_reservation_index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                </a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

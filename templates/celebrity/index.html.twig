@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Celebrities{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .blog-item {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            width: 50%;
+        }
+        .blog-img {
+            flex: 1;
+            width: 50%;
+        }
+        .blog-content {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 50%;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Celebrities Start -->
+    <div class="container-fluid blog py-5">
+        <div class="container py-5">
+            <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+                <h5 class="section-title px-3">Celebrities</h5>
+                <h1 class="mb-4">Explore Our Celebrities</h1>
+                <p class="mb-0">Discover the lives and achievements of celebrities from around the world. From actors to musicians, there's something for everyone to admire.</p>
+            </div>
+            <div class="d-flex justify-content-end mb-3">
+                <a href="{{ path('app_celebrity_new') }}" class="btn btn-primary">Create new Celebrity</a>
+            </div>
+            <div class="row g-4 justify-content-center">
+                {% for celebrity in celebrities %}
+                    <div class="col-md-12 d-flex">
+                        <div class="blog-item hover-card w-100">
+                            <div class="blog-img">
+                                <div class="blog-img-inner">
+                                    <img class="img-fluid w-100 rounded-top" src="{{ celebrity.img }}" alt="{{ celebrity.name }}" style="height: 200px; object-fit: cover;">
+                                    <div class="blog-icon">
+                                        <a href="{{ path('app_celebrity_show', {'id': celebrity.id}) }}" class="my-auto">
+                                            <i class="fas fa-link fa-2x text-white"></i>
+                                        </a>
+                                        <a href="{{ path('app_celebrity_edit', {'id': celebrity.id}) }}" class="btn btn-secondary rounded-pill py-2 px-4">Update</a>
+                                        <form method="post" action="{{ path('app_celebrity_delete', {'id': celebrity.id}) }}" class="d-inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ celebrity.id) }}">
+                                            <button class="btn btn-secondary rounded-pill py-2 px-4">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="blog-content border border-top-0 rounded-bottom p-4">
+                                <p class="mb-3">Celebrity: {{ celebrity.name }}</p>
+                                <a href="{{ path('app_celebrity_show', {'id': celebrity.id}) }}" class="h4">{{ celebrity.name }}</a>
+                                <p class="my-3">Explore the life and achievements of {{ celebrity.name }}.</p>
+                                <a href="{{ path('app_celebrity_show', {'id': celebrity.id}) }}" class="btn btn-primary rounded-pill py-2 px-4">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- Celebrities End -->
+{% endblock %}

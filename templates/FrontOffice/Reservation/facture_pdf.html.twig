@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Facture #{{ reservation.id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.4;
+            margin: 0;
+            padding: 30px;
+            color: #333;
+            background: #2c3e50;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding: 15px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .agency-name {
+            font-size: 48px;
+            font-weight: 800;
+            color: #ffffff;
+            margin: 10px 0;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .slogan {
+            color: #3498db;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+            font-style: italic;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .document-title {
+            position: absolute;
+            right: -10px;
+            top: 20px;
+            background: #e74c3c;
+            color: white;
+            padding: 8px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 0 15px 0 30px;
+            box-shadow: -4px 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .info-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            gap: 20px;
+        }
+
+        .info-block {
+            flex: 1;
+            padding: 15px;
+            background: #f3f4f8;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 4px solid #e74c3c;
+        }
+
+        .info-block h3 {
+            color: #e74c3c;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        .info-block p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .details-table th {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .details-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e3f1;
+            background: #f3f4f8;
+            font-size: 14px;
+        }
+
+        .details-table tr:nth-child(even) td {
+            background: #e8eaf6;
+        }
+
+        .total-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f3f4f8;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 20px;
+            font-size: 14px;
+            color: #e74c3c;
+        }
+
+        .final-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            margin-top: 10px;
+            border-top: 2px solid #e0e3f1;
+            font-size: 20px;
+            color: #e74c3c;
+            font-weight: bold;
+            background: #e8eaf6;
+            border-radius: 8px;
+        }
+
+        .payment-info {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f3f4f8;
+            border-radius: 15px;
+            border-left: 6px solid #e74c3c;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            font-size: 14px;
+        }
+
+        .payment-info p {
+            margin: 5px 0;
+        }
+
+        .status-paid {
+            display: inline-block;
+            color: #28a745;
+            font-weight: bold;
+            padding: 3px 8px;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        .thank-you {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 16px;
+            color: #e74c3c;
+            font-style: italic;
+        }
+
+        .company-info {
+            text-align: center;
+            color: #666;
+            font-size: 8px;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="document-title">FACTURE</div>
+        <div class="agency-name">WONDERWISE</div>
+        <div class="slogan">Discover the World, Create Memories</div>
+    </div>
+
+    <div class="info-container">
+        <div class="info-block">
+            <h3>INFORMATIONS CLIENT</h3>
+            <p><strong>Nom:</strong> {{ reservation.nom }}</p>
+            <p><strong>Email:</strong> {{ reservation.email }}</p>
+        </div>
+        <div class="info-block">
+            <h3>DÉTAILS FACTURE</h3>
+            <p><strong>N° Facture:</strong> {{ reservation.id }}</p>
+            <p><strong>Date:</strong> {{ reservation.datePaiement|date('d/m/Y') }}</p>
+        </div>
+    </div>
+
+    <table class="details-table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Destination</th>
+                <th>Nombre de personnes</th>
+                <th>Prix unitaire</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ reservation.offre.titre }}</td>
+                <td>{{ reservation.offre.pays }}</td>
+                <td>{{ reservation.nombrePersonne }}</td>
+                <td>{{ reservation.offre.prix }}€</td>
+                <td>{{ reservation.nombrePersonne * reservation.offre.prix }}€</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        <div class="total-row">
+            <span>Total HT</span>
+            <span>{{ (reservation.nombrePersonne * reservation.offre.prix * 0.8)|round(2) }}€</span>
+        </div>
+        <div class="total-row">
+            <span>TVA (20%)</span>
+            <span>{{ (reservation.nombrePersonne * reservation.offre.prix * 0.2)|round(2) }}€</span>
+        </div>
+        <div class="final-total">
+            <span>Total TTC</span>
+            <span>{{ reservation.nombrePersonne * reservation.offre.prix }}€</span>
+        </div>
+    </div>
+
+    <div class="payment-info">
+        <p><strong>Mode de paiement:</strong> Carte bancaire</p>
+        <p><strong>Date de paiement:</strong> {{ reservation.datePaiement|date('d/m/Y') }}</p>
+        <p><strong>Statut:</strong> <span class="status-paid">✓ Payé</span></p>
+    </div>
+
+    <div class="thank-you">
+        Merci de votre confiance ! Nous vous souhaitons un excellent voyage avec Wonderwise.
+    </div>
+
+    <div class="company-info">
+        WONDERWISE - Travel and Tourism | 10 Oxford Street, London W1D 1AH, United Kingdom<br>
+        Tel: +44 20 7123 4567 | Email: contact@wonderwise.com | Company N°: 12345678 | VAT N°: GB123456789
+    </div>
+</body>
+</html>

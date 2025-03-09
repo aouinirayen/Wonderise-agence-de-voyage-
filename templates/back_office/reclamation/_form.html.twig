@@ -1,0 +1,30 @@
+{{ form_start(form, { 'attr': { 'novalidate': 'novalidate' } }) }}
+
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for error in form.vars.errors %}
+                    <li>{{ error.message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {% for field in form %}
+        <div class="mb-3">
+            {{ form_label(field, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(field, { 'attr': { 'class': 'form-control' } }) }}
+
+            {% if field.vars.errors|length > 0 %}
+                <div class="text-danger">
+                    {% for error in field.vars.errors %}
+                        <small>{{ error.message }}</small>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <button class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
+
+{{ form_end(form) }}

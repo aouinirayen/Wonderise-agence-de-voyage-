@@ -1,0 +1,15 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    App\WeatherBundle\:
+        resource: '../../'
+        exclude:
+            - '../../DependencyInjection/'
+            - '../../Resources/'
+            - '../../WeatherBundle.php'
+
+    App\WeatherBundle\Service\WeatherService:
+        public: true

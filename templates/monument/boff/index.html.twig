@@ -1,0 +1,231 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Monuments{% endblock %}
+
+
+
+{% block body %}
+    
+    <style>
+        .blog-item {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            width: 100%;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .blog-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .blog-img {
+            flex: 1;
+            position: relative;
+            min-width: 200px;
+        }
+        
+        .blog-content {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        
+        .image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 200px;
+        }
+        
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-wrapper::after {
+            content: 'wonderwise';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 1.5em;
+            color: rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            pointer-events: none;
+            font-family: Arial, sans-serif;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        
+        .blog-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .blog-actions form {
+            margin: 0;
+        }
+
+        .blog-actions .btn,
+        .blog-actions button {
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            min-width: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog-actions .btn::before,
+        .blog-actions button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .blog-actions .btn:hover::before,
+        .blog-actions button:hover::before {
+            left: 100%;
+        }
+
+        .blog-actions .btn:hover,
+        .blog-actions button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-view {
+            background: linear-gradient(45deg, #0d6efd, #0a58ca);
+            color: #fff !important;
+        }
+        
+        .btn-update {
+            background: linear-gradient(45deg, #ffc107, #ffaa00);
+            color: #000 !important;
+        }
+        
+        .btn-delete {
+            background: linear-gradient(45deg, #dc3545, #bb2d3b);
+            color: #fff !important;
+        }
+
+        .btn-view:hover {
+            background: linear-gradient(45deg, #0a58ca, #084298);
+        }
+
+        .btn-update:hover {
+            background: linear-gradient(45deg, #ffaa00, #ff8800);
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(45deg, #bb2d3b, #984646);
+        }
+
+        .btn i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .blog-item {
+                flex-direction: column;
+            }
+            
+            .blog-img {
+                min-width: 100%;
+            }
+            
+            .image-wrapper {
+                min-height: 200px;
+            }
+            
+            .blog-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .blog-actions .btn,
+            .blog-actions button {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+    <!-- Monuments Start -->
+    <div class="container-fluid blog py-5">
+        <div class="container py-5">
+            <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+                <h5 class="section-title px-3">Monuments</h5>
+                <h1 class="mb-4">Explore Our Monuments</h1>
+                <p class="mb-0">Discover the beauty and history of monuments around the world. From ancient structures to modern marvels, there's something for everyone to explore.</p>
+            </div>
+            <div class="d-flex justify-content-end mb-3">
+                <a href="{{ path('app_monument_new1') }}" class="btn btn-primary">Create new Monument</a>
+            </div>
+            <div class="row g-4">
+                {% for monument in monuments %}
+                    <div class="col-12">
+                        <div class="blog-item">
+                            <div class="blog-img">
+                                <div class="image-wrapper">
+                                    <img class="img-fluid w-100 rounded-top" src="{{ asset('uploads/images/' ~ monument.img) }}" alt="{{ monument.name }}" style="height: 200px; object-fit: cover;">
+                                </div>
+                            </div>
+                            <div class="blog-content">
+                                <div>
+                                    <h4 class="mb-3">{{ monument.name }}</h4>
+                                    <p class="mb-3">Explore the unique history and architecture of {{ monument.name }}.</p>
+                                </div>
+                                <div class="blog-actions">
+                                    <a href="{{ path('app_monument_show1', {'id': monument.id}) }}" class="btn btn-view">
+                                        <i class="fas fa-eye"></i>View Details
+                                    </a>
+                                    <a href="{{ path('app_monument_edit1', {'id': monument.id}) }}" class="btn btn-update">
+                                        <i class="fas fa-edit"></i>Update
+                                    </a>
+                                    <form method="post" action="{{ path('app_monument_delete', {'id': monument.id}) }}" onsubmit="return confirm('Are you sure you want to delete {{ monument.name }}?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ monument.id) }}">
+                                        <button class="btn btn-delete">
+                                            <i class="fas fa-trash"></i>Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- Monuments End -->
+{% endblock %}

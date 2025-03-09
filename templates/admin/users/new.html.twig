@@ -1,0 +1,129 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Nouvel utilisateur{% endblock %}
+
+{% block body %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Nouvel utilisateur</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{ path('admin_home') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ path('admin_users') }}">Utilisateurs</a></li>
+                        <li class="breadcrumb-item active">Nouveau</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Prénom</label>
+                                    <input type="text" class="form-control" name="firstName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nom</label>
+                                    <input type="text" class="form-control" name="lastName" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nom d'utilisateur</label>
+                                    <input type="text" class="form-control" name="username" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Mot de passe</label>
+                                    <input type="password" class="form-control" name="password" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Pays</label>
+                                    <select class="form-control" name="countryCode" required>
+                                        <option value="">Sélectionner un pays</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Rôle</label>
+                                    <select class="form-control" name="roles[]" required>
+                                        <option value="ROLE_USER">Utilisateur</option>
+                                        <option value="ROLE_ADMIN">Administrateur</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Photo de profil</label>
+                                    <input type="file" class="form-control" name="profilePhoto">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="isActive" name="isActive" checked>
+                                <label class="custom-control-label" for="isActive">Compte actif</label>
+                            </div>
+                        </div>
+
+                        <div class="text-right">
+                            <a href="{{ path('admin_users') }}" class="btn btn-secondary">Annuler</a>
+                            <button type="submit" class="btn btn-primary">Créer l'utilisateur</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Remplir la liste des pays
+    fetch('https://restcountries.com/v3.1/all')
+        .then(response => response.json())
+        .then(countries => {
+            const countrySelect = document.querySelector('select[name="countryCode"]');
+            countries.sort((a, b) => a.translations.fra.common.localeCompare(b.translations.fra.common))
+                    .forEach(country => {
+                const option = document.createElement('option');
+                option.value = country.cca2;
+                option.textContent = country.translations.fra.common;
+                countrySelect.appendChild(option);
+            });
+        });
+});
+</script>
+{% endblock %}

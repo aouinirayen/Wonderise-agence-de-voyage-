@@ -1,0 +1,66 @@
+
+{% if offres is empty %}
+    <div class="alert alert-info">
+        Aucune offre ne correspond à votre recherche.
+    </div>
+{% else %}
+    {% for offre in offres %}
+        <div class="offer-card">
+            <div class="offer-image-container">
+                {% if offre.image %}
+                    <img class="offer-image" src="{{ asset('uploads/images/' ~ offre.image) }}" alt="{{ offre.titre }}">
+                {% endif %}
+                {% if offre.weatherData and offre.weatherData.success %}
+                    <div class="weather-badge">
+                        <div class="weather-temp">{{ offre.weatherData.temperature|number_format(1) }}°C</div>
+                        <div class="weather-icon">
+                            <i class="fas fa-{{ offre.weatherData.icon }}"></i>
+                        </div>
+                        <div class="weather-desc">{{ offre.weatherData.description }}</div>
+                    </div>
+                {% endif %}
+                <div class="offer-places-badge">
+                    <i class="fas fa-users"></i> {{ offre.placesDisponibles }} places
+                </div>
+            </div>
+            <div class="offer-content">
+                <div class="offer-header">
+                    <h3 class="offer-title">{{ offre.titre }}</h3>
+                    <div class="offer-price">{{ offre.prix }} €</div>
+                </div>
+
+                <div class="rating" data-offer-id="{{ offre.id }}" style="color: #ffa41b;">
+                    {% for i in 1..5 %}
+                        <i class="far fa-star rating-star" data-rating="{{ i }}" style="color: #ffa41b;"></i>
+                    {% endfor %}
+                    <span class="rating-value">(0)</span>
+                </div>
+                <p class="offer-description">{{ offre.description }}</p>
+                <div class="offer-dates">
+                    <div class="date-group">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div>
+                            <div class="date-label">Départ</div>
+                            <div class="date-value">{{ offre.dateDebut|date('d/m/Y') }}</div>
+                        </div>
+                    </div>
+                    <div class="date-group">
+                        <i class="fas fa-calendar-check"></i>
+                        <div>
+                            <div class="date-label">Retour</div>
+                            <div class="date-value">{{ offre.dateFin|date('d/m/Y') }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="offer-buttons">
+                    <a href="{{ path('app_offre_show', {'id': offre.id}) }}" class="btn-details">
+                        <i class="fas fa-info-circle"></i> Plus de détails
+                    </a>
+                    <a href="{{ path('app_reservation_new', {'id': offre.id}) }}" class="btn-reserve">
+                        <i class="fas fa-ticket-alt"></i> Réserver
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}

@@ -1,0 +1,252 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ country.name }} - Country Details{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .search-container {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+        .search-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        .item-container {
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h1 class="card-title mb-0">{{ country.name }}</h1>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img class="img-fluid w-100 rounded-top" src="{{ asset('uploads/images/' ~ country.img) }}" alt="{{ country.name }}">
+                    </div>
+                    <div class="col-md-6">
+                        <p class="lead">{{ country.description }}</p>
+                        <div class="mt-4">
+                            <h2 class="h4 text-secondary">Details</h2>
+                            <p class="text-muted"><strong>Currency:</strong> {{ country.currency }}</p>
+                            <p class="text-muted"><strong>ISO Code:</strong> {{ country.isoCode }}</p>
+                            <p class="text-muted"><strong>Calling Code:</strong> {{ country.callingCode }}</p>
+                            <p class="text-muted"><strong>Climate:</strong> {{ country.climate }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Grid -->
+        <div class="container mt-5">
+            <div class="row">
+                <!-- Monuments Section -->
+                <div class="col-lg-6 mb-5">
+                    <div class="section mb-5">
+                        <h2 class="text-center mb-4">Monuments</h2>
+                        <div class="search-container">
+                            <input type="text" class="search-input" data-type="monuments" placeholder="Search monuments...">
+                        </div>
+                        <div class="row g-4" id="monumentsContainer">
+                            {% include 'country/_monuments.html.twig' with {'monuments': country.monuments} %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Traditional Foods Section -->
+                <div class="col-lg-6 mb-5">
+                    <div class="section mb-5">
+                        <h2 class="text-center mb-4">Traditional Foods</h2>
+                        <div class="search-container">
+                            <input type="text" class="search-input" data-type="traditionalfoods" placeholder="Search traditional foods...">
+                        </div>
+                        <div class="row g-4" id="traditionalFoodsContainer">
+                            {% include 'country/_traditional_foods.html.twig' with {'traditionalFoods': country.traditionalFoods} %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <!-- Arts Section -->
+                <div class="col-lg-6 mb-5">
+                    <div class="section mb-5">
+                        <h2 class="text-center mb-4">Arts</h2>
+                        <div class="search-container">
+                            <input type="text" class="search-input" data-type="arts" placeholder="Search arts...">
+                        </div>
+                        <div class="row g-4" id="artsContainer">
+                            {% include 'country/_arts.html.twig' with {'arts': country.arts} %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Celebrities Section -->
+                <div class="col-lg-6 mb-5">
+                    <div class="section mb-5">
+                        <h2 class="text-center mb-4">Celebrities</h2>
+                        <div class="search-container">
+                            <input type="text" class="search-input" data-type="celebrities" placeholder="Search celebrities...">
+                        </div>
+                        <div class="row g-4" id="celebritiesContainer">
+                            {% include 'country/_celebrities.html.twig' with {'celebrities': country.celebrities} %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const containers = {
+                'monuments': {
+                    container: document.getElementById('monumentsContainer'),
+                    originalContent: document.getElementById('monumentsContainer').innerHTML,
+                    title: 'Monuments'
+                },
+                'arts': {
+                    container: document.getElementById('artsContainer'),
+                    originalContent: document.getElementById('artsContainer').innerHTML,
+                    title: 'Arts'
+                },
+                'traditionalfoods': {
+                    container: document.getElementById('traditionalFoodsContainer'),
+                    originalContent: document.getElementById('traditionalFoodsContainer').innerHTML,
+                    title: 'Traditional Foods'
+                },
+                'celebrities': {
+                    container: document.getElementById('celebritiesContainer'),
+                    originalContent: document.getElementById('celebritiesContainer').innerHTML,
+                    title: 'Celebrities'
+                }
+            };
+
+            let debounceTimers = {};
+
+            function performSearch(searchTerm, type, container, title) {
+                console.log('Performing search:', { type, searchTerm });
+
+                container.innerHTML = `
+                    <div class="col-12 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p>Searching ${title.toLowerCase()}...</p>
+                    </div>
+                `;
+
+                fetch(`{{ path('api_country_items_search', {'id': country.id}) }}?q=${encodeURIComponent(searchTerm)}&type=${type}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => Promise.reject(err));
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Search response:', data);
+
+                    if (data.success) {
+                        if (data.items.length === 0) {
+                            container.innerHTML = `
+                                <div class="col-12 text-center">
+                                    <h3>No ${title.toLowerCase()} found</h3>
+                                    <p class="text-muted">Try a different search term</p>
+                                </div>`;
+                        } else {
+                            container.innerHTML = data.items.map(item => `
+                                <div class="col-lg-4 col-md-6 item-container">
+                                    <div class="card hover-card">
+                                        <img src="{{ asset('uploads/images/') }}/${item.img}" class="card-img-top" alt="${item.name}" style="height: 200px; object-fit: cover;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${item.name}</h5>
+                                            <p class="card-text">${item.description || ''}</p>
+                                            <a href="${item.url}" class="btn btn-primary">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('');
+                        }
+                    } else {
+                        throw new Error(data.error || 'Unknown error occurred');
+                    }
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    container.innerHTML = `
+                        <div class="col-12 text-center">
+                            <h3>Error loading ${title.toLowerCase()}</h3>
+                            <p class="text-danger">${error.message || 'An unexpected error occurred'}</p>
+                            <button class="btn btn-outline-primary mt-3" onclick="location.reload()">
+                                <i class="fas fa-sync-alt"></i> Reload Page
+                            </button>
+                        </div>`;
+                });
+            }
+
+            document.querySelectorAll('.search-input').forEach(input => {
+                const type = input.dataset.type;
+                const containerData = containers[type];
+                
+                if (!containerData) {
+                    console.error('No container found for type:', type);
+                    return;
+                }
+
+                input.addEventListener('input', function(e) {
+                    clearTimeout(debounceTimers[type]);
+                    const searchTerm = this.value.trim();
+                    
+                    if (searchTerm === '') {
+                        containerData.container.innerHTML = containerData.originalContent;
+                        return;
+                    }
+
+                    debounceTimers[type] = setTimeout(() => {
+                        performSearch(searchTerm, type, containerData.container, containerData.title);
+                    }, 300);
+                });
+
+                // Focus handling
+                input.addEventListener('focus', function() {
+                    this.classList.add('shadow-sm');
+                });
+
+                input.addEventListener('blur', function() {
+                    this.classList.remove('shadow-sm');
+                });
+
+                // Update placeholder
+                input.placeholder = `Search ${containerData.title.toLowerCase()}...`;
+            });
+        });
+    </script>
+{% endblock %}

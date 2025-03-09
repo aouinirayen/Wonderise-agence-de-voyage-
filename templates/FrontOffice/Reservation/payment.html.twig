@@ -1,0 +1,361 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement de votre réservation{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .payment-wrapper {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            padding: 40px 20px;
+        }
+
+        .payment-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .payment-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .reservation-details {
+            padding: 40px;
+            background: #f8fafc;
+        }
+
+        .payment-section {
+            padding: 40px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1f36;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: #0570de;
+            border-radius: 2px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #e5e9f2;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+            margin-top: 15px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e9f2;
+        }
+
+        .detail-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .total-amount {
+            font-size: 18px;
+            color: #0570de;
+        }
+
+        .payment-form {
+            margin-top: 30px;
+        }
+
+        #payment-element {
+            margin-bottom: 24px;
+        }
+
+        .pay-button {
+            width: 100%;
+            padding: 14px;
+            background: #0570de;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pay-button:hover {
+            background: #0461c7;
+            transform: translateY(-1px);
+        }
+
+        .pay-button:disabled {
+            background: #a5b4fc;
+            cursor: not-allowed;
+        }
+
+        .payment-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .payment-message.error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .payment-message.success {
+            background: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .security-info {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .security-info i {
+            color: #0570de;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="payment-wrapper">
+        <div class="payment-container">
+            <!-- Détails de la réservation -->
+            <div class="reservation-details">
+                <h2 class="section-title">Détails de la réservation</h2>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Nom complet</span>
+                    <span class="detail-value">{{ reservation.nom }} {{ reservation.prenom }}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value">{{ reservation.email }}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Destination</span>
+                    <span class="detail-value">{{ reservation.offre.titre }} - {{ reservation.offre.pays }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Nombre de personnes</span>
+                    <span class="detail-value">{{ reservation.nombrePersonne }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Prix par personne</span>
+                    <span class="detail-value">{{ reservation.offre.prix }}€</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Total à payer</span>
+                    <span class="detail-value total-amount">{{ reservation.nombrePersonne * reservation.offre.prix }}€</span>
+                </div>
+            </div>
+
+            <!-- Section de paiement -->
+            <div class="payment-section">
+                <h2 class="section-title">Paiement sécurisé</h2>
+                
+                <form id="payment-form" class="payment-form">
+                    <div id="link-authentication-element"></div>
+                    <div id="payment-element"></div>
+                    
+                    <button type="submit" class="pay-button" id="submit-button">
+                        <span id="button-text">Payer {{ reservation.nombrePersonne * reservation.offre.prix }}€</span>
+                        <div class="spinner" id="spinner" style="display: none;"></div>
+                    </button>
+
+                    <div id="payment-message" class="payment-message"></div>
+                </form>
+
+                <div class="security-info">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Paiement sécurisé par Stripe. Vos données sont chiffrées et protégées.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe('{{ stripe_public_key }}');
+        let elements;
+
+        initialize();
+
+        document.querySelector("#payment-form").addEventListener("submit", handleSubmit);
+
+        async function initialize() {
+            try {
+                const response = await fetch('{{ path('app_reservation_process_payment', {'id': reservation.id}) }}', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+                
+                const { clientSecret } = await response.json();
+
+                const appearance = {
+                    theme: 'stripe',
+                    variables: {
+                        colorPrimary: '#0570de',
+                        colorBackground: '#ffffff',
+                        colorText: '#1a1f36',
+                        colorDanger: '#df1b41',
+                        fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                        spacingUnit: '4px',
+                        borderRadius: '10px'
+                    }
+                };
+
+                elements = stripe.elements({ appearance, clientSecret });
+
+                const linkAuthenticationElement = elements.create("linkAuthentication");
+                linkAuthenticationElement.mount("#link-authentication-element");
+
+                const paymentElement = elements.create("payment");
+                paymentElement.mount("#payment-element");
+            } catch (e) {
+                console.error("Error:", e);
+                showMessage("Une erreur est survenue lors de l'initialisation du paiement.", "error");
+            }
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            setLoading(true);
+
+            try {
+                const { error, paymentIntent } = await stripe.confirmPayment({
+                    elements,
+                    redirect: 'if_required',
+                    confirmParams: {
+                        return_url: window.location.href,
+                        payment_method_data: {
+                            billing_details: {
+                                name: '{{ reservation.nom }} {{ reservation.prenom }}',
+                                email: '{{ reservation.email }}'
+                            }
+                        }
+                    }
+                });
+
+                if (error) {
+                    showMessage(error.message, "error");
+                } else if (paymentIntent && paymentIntent.status === "succeeded") {
+                    // Envoyer la confirmation au serveur
+                    const response = await fetch('{{ path('app_reservation_confirm_payment', {'id': reservation.id}) }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            paymentIntentId: paymentIntent.id
+                        })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showMessage("Paiement réussi ! Redirection vers la page de confirmation...", "success");
+                        setTimeout(() => {
+                            window.location.href = '{{ path('app_reservation_confirmation', {'id': reservation.id}) }}';
+                        }, 2000);
+                    } else {
+                        showMessage(result.error || "Une erreur est survenue", "error");
+                    }
+                }
+            } catch (e) {
+                console.error("Error:", e);
+                showMessage("Une erreur est survenue lors du traitement du paiement.", "error");
+            }
+
+            setLoading(false);
+        }
+
+        function showMessage(messageText, type) {
+            const messageContainer = document.querySelector("#payment-message");
+            messageContainer.textContent = messageText;
+            messageContainer.className = `payment-message ${type}`;
+            messageContainer.style.display = "block";
+        }
+
+        function setLoading(isLoading) {
+            const submitButton = document.querySelector("#submit-button");
+            const spinner = document.querySelector("#spinner");
+            const buttonText = document.querySelector("#button-text");
+
+            if (isLoading) {
+                submitButton.disabled = true;
+                spinner.style.display = "inline-block";
+                buttonText.style.display = "none";
+            } else {
+                submitButton.disabled = false;
+                spinner.style.display = "none";
+                buttonText.style.display = "inline-block";
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Experiences{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .blog-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .blog-img img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .blog-content {
+            padding: 20px;
+        }
+
+        .blog-content h4 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .blog-meta {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .blog-description {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .btn-read-more {
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .btn-read-more:hover {
+            background-color: #0056b3;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h1>🌍 Explore Our Experiences</h1>
+            <p>Discover fascinating adventures and cultures around the world.</p>
+        </div>
+
+        <h1>List of Experiences</h1>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <form method="get" action="{{ path('app_experience_index') }}" class="d-flex">
+                    <input type="text" name="search" value="{{ searchTerm }}" class="form-control me-2" placeholder="Search by location...">
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
+                </form>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="{{ path('app_experience_new') }}" class="btn btn-primary">
+                    Create New Experience
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            {% for experience in experiences %}
+                <div class="col-md-6 mb-4">
+                    <div class="blog-card">
+                        <!-- Image -->
+                        <div class="blog-img">
+                            <img src="{{ experience.getURl() ?: 'default.jpg' }}" alt="{{ experience.getTitre() }}">
+                        </div>
+
+                        <!-- Contenu -->
+                        <div class="blog-content">
+                            <h4>{{ experience.getTitre() }}</h4>
+                            <p class="blog-meta">🕒 Published on {{ experience.getDate()|date('d/m/Y') }}</p>
+                            <p class="blog-description">{{ experience.getDescription()|length > 100 ? experience.getDescription()|slice(0, 100) ~ '...' : experience.getDescription() }}</p>
+                            <a href="{{ path('app_experience_show', {'id': experience.getId()}) }}" class="btn-read-more">📖 Read More</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-center">No experiences published yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

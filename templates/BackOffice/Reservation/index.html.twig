@@ -1,0 +1,260 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Liste des Réservations{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Keep only sort indicators */
+        th.sort-asc::after {
+            content: '↑';
+            opacity: 1;
+        }
+        th.sort-desc::after {
+            content: '↓';
+            opacity: 1;
+        }
+        .sort-icon {
+            cursor: pointer;
+            padding: 0 5px;
+            color: #0d6efd;
+        }
+        .sort-icon:hover {
+            color: #0a58ca;
+        }
+        th {
+            white-space: nowrap;
+        }
+        .btn-action {
+            margin-right: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <h1 class="page-title">Liste des Réservations</h1>
+
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3>{{ reservations|length }}</h3>
+                        <p class="text-muted">Réservations</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3>{{ total_personnes }}</h3>
+                        <p class="text-muted">Personnes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3>{{ uniqueOffres|length }}</h3>
+                        <p class="text-muted">Offres Réservées</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                <input type="text" class="form-control search-input" placeholder="Rechercher une réservation...">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Offre</label>
+                    <select class="form-control" id="offre">
+                        <option value="">Toutes les offres</option>
+                        {% for offre in uniqueOffres %}
+                            <option value="{{ offre.titre }}">{{ offre.titre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Nombre de personnes</label>
+                    <select class="form-control" id="filter-personnes">
+                        <option value="">Tous</option>
+                        <option value="1">1 personne</option>
+                        <option value="2">2 personnes</option>
+                        <option value="3">3 personnes</option>
+                        <option value="4+">4 personnes ou plus</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID <span class="sort-icon">↕</span></th>
+                                <th>CLIENT <span class="sort-icon">↕</span></th>
+                                <th>OFFRE <span class="sort-icon">↕</span></th>
+                                <th>PERSONNES <span class="sort-icon">↕</span></th>
+                                <th>CONTACT <span class="sort-icon">↕</span></th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reservation in reservations %}
+                                <tr>
+                                    <td>{{ reservation.id }}</td>
+                                    <td>{{ reservation.nom }}<br><small>{{ reservation.email }}</small></td>
+                                    <td>{{ reservation.offre.titre }}<br><small>{{ reservation.offre.prix }}€ par personne</small></td>
+                                    <td>{{ reservation.nombrePersonne }}</td>
+                                    <td>{{ reservation.telephone }}</td>
+                                    <td>
+                                        <a href="{{ path('admin_reservation_edit', {'id': reservation.id}) }}" class="btn btn-primary btn-sm btn-action">
+                                            <i class="fas fa-edit"></i> Modifier
+                                        </a>
+                                        <form method="post" action="{{ path('admin_reservation_delete', {'id': reservation.id}) }}" style="display: inline-block" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?');">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i> Supprimer
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div id="columnChart"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="pieChart"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            // Données pour les graphiques
+            var reservationData = {};
+            {% for r in reservations %}
+                var offreId = '{{ r.offre.titre }}';
+                if (!reservationData[offreId]) {
+                    reservationData[offreId] = {
+                        reservations: 0,
+                        personnes: 0
+                    };
+                }
+                reservationData[offreId].reservations++;
+                reservationData[offreId].personnes += {{ r.nombrePersonne }};
+            {% endfor %}
+
+            // Column Chart
+            var columnData = new google.visualization.DataTable();
+            columnData.addColumn('string', 'Offre');
+            columnData.addColumn('number', 'Réservations');
+            columnData.addColumn('number', 'Personnes');
+
+            for (var offre in reservationData) {
+                columnData.addRow([
+                    offre,
+                    reservationData[offre].reservations,
+                    reservationData[offre].personnes
+                ]);
+            }
+
+            var columnChart = new google.visualization.ColumnChart(document.getElementById('columnChart'));
+            columnChart.draw(columnData, {
+                title: 'Statistiques des Réservations',
+                height: 400,
+                hAxis: {title: 'Offres'},
+                vAxes: {
+                    0: {title: 'Nombre'},
+                    1: {title: 'Personnes'}
+                },
+                seriesType: 'bars'
+            });
+
+            // Pie Chart
+            var pieData = new google.visualization.DataTable();
+            pieData.addColumn('string', 'Offre');
+            pieData.addColumn('number', 'Réservations');
+
+            for (var offre in reservationData) {
+                pieData.addRow([offre, reservationData[offre].reservations]);
+            }
+
+            var pieChart = new google.visualization.PieChart(document.getElementById('pieChart'));
+            pieChart.draw(pieData, {
+                title: 'Répartition des Réservations',
+                height: 400,
+                is3D: true
+            });
+        }
+
+        // Recherche en temps réel
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            const rows = document.querySelectorAll('tbody tr');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+
+            // Filtres
+            const offreSelect = document.querySelector('#offre');
+            const personnesSelect = document.querySelector('#filter-personnes');
+
+            function filterTable() {
+                const selectedOffre = offreSelect.value.toLowerCase();
+                const selectedPersonnes = personnesSelect.value;
+
+                rows.forEach(row => {
+                    const offre = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                    const personnes = parseInt(row.querySelector('td:nth-child(4)').textContent);
+                    
+                    let showRow = true;
+
+                    if (selectedOffre && !offre.includes(selectedOffre)) {
+                        showRow = false;
+                    }
+
+                    if (selectedPersonnes) {
+                        if (selectedPersonnes === '4+') {
+                            if (personnes < 4) showRow = false;
+                        } else if (personnes !== parseInt(selectedPersonnes)) {
+                            showRow = false;
+                        }
+                    }
+
+                    row.style.display = showRow ? '' : 'none';
+                });
+            }
+
+            offreSelect.addEventListener('change', filterTable);
+            personnesSelect.addEventListener('change', filterTable);
+        });
+    </script>
+{% endblock %}

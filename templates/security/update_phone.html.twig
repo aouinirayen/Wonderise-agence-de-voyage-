@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Update Phone Number{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Update Phone Number</h3>
+                </div>
+                <div class="card-body">
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                    {% for message in app.flashes('danger') %}
+                        <div class="alert alert-danger">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                    {{ form_start(form) }}
+                    <div class="mb-3">
+                        {{ form_label(form.numTel) }}
+                        {{ form_widget(form.numTel) }}
+                        <small class="form-text text-muted">Enter your phone number with country code (e.g., +216 for Tunisia)</small>
+                        {{ form_errors(form.numTel) }}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Update Phone Number</button>
+                        <a href="{{ path('app_login') }}" class="btn btn-secondary">Back to Login</a>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

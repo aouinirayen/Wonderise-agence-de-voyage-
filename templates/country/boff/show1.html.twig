@@ -1,0 +1,145 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}{{ country.name }} - Country Details{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="card shadow-lg">
+        <!-- Card Header -->
+        <div class="card-header bg-primary text-white">
+            <h1 class="card-title mb-0 text-white" >{{ country.name }}</h1>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="row">
+                <!-- Country Image -->
+                <div class="col-md-6">
+              <img class="img-fluid w-100 rounded-top" src="{{ asset('uploads/images/' ~ country.img) }}" alt="{{ country.name }}" style="height: 200px; object-fit: cover;">
+
+                </div>
+
+                <!-- Country Details -->
+                <div class="col-md-6">
+                    <p class="lead">{{ country.description }}</p>
+                    <div class="mt-4">
+                        <h2 class="h4 text-secondary">Details</h2>
+                        <p class="text-muted"><strong>Currency:</strong> {{ country.currency }}</p>
+                        <p class="text-muted"><strong>ISO Code:</strong> {{ country.isoCode }}</p>
+                        <p class="text-muted"><strong>Calling Code:</strong> {{ country.callingCode }}</p>
+                        <p class="text-muted"><strong>Climate:</strong> {{ country.climate }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ path('app_country_admin_edit', {'id': country.id}) }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <form method="post" action="{{ path('app_country_admin_delete', {'id': country.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ country.id) }}">
+                    <button class="btn btn-danger btn-lg">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Monuments Section -->
+            <div class="col-lg-6 mb-5">
+                <h3 class="mb-4 text-primary">Monuments</h3>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% for monument in country.monuments %}
+                        <div class="col">
+                            <div class="card shadow-sm border-0 hover-effect">
+                                <a href="{{ path('app_monument_show1', {'id': monument.id}) }}" class="text-decoration-none text-dark">
+                                    <img class="img-fluid w-100 rounded-top" src="{{ asset('uploads/images/' ~ monument.img) }}" alt="{{ country.name }}" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">{{ monument.name }}</h5>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Traditional Foods Section -->
+            <div class="col-lg-6 mb-5">
+                <h3 class="mb-4 text-success">Traditional Foods</h3>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% for food in country.traditionalFoods %}
+                        <div class="col">
+                            <div class="card shadow-sm border-0 hover-effect">
+                                <a href="{{ path('app_traditional_food_show1', {'id': food.id}) }}" class="text-decoration-none text-dark">
+                                 <img class="img-fluid w-100 rounded-top" src="{{ asset('uploads/images/' ~ food.img) }}" alt="{{ food.name }}" style="height: 200px; object-fit: cover;">
+                                <a href="{{ path('app_monument_show1', {'id': food.id}) }}" class="text-decoration-none text-dark">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">{{ food.name }}</h5>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <!-- Arts Section -->
+            <div class="col-lg-6 mb-5">
+                <h3 class="mb-4 text-danger">Arts</h3>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% for art in country.arts %}
+                        <div class="col">
+                            <div class="card shadow-sm border-0 hover-effect">
+                                <a href="{{ path('app_art_show1', {'id': art.id}) }}" class="text-decoration-none text-dark">
+                                    <img class="img-fluid w-100 rounded-top" src="{{ asset('uploads/images/' ~ art.img) }}" alt="{{ art.name }}" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">{{ art.name }}</h5>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Celebrities Section -->
+            <div class="col-lg-6 mb-5">
+                <h3 class="mb-4 text-warning">Celebrities</h3>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% for celebrity in country.celebrities %}
+                        <div class="col">
+                            <div class="card shadow-sm border-0 hover-effect">
+                                <a href="{{ path('app_celebrity_show1', {'id': celebrity.id}) }}" class="text-decoration-none text-dark">
+                                    <img class="img-fluid w-100 rounded-top" src="{{ asset('uploads/images/' ~ celebrity.img) }}" alt="{{ celebrity.name }}" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">{{ celebrity.name }}</h5>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .hover-effect:hover {
+        transform: scale(1.05);
+        transition: 0.3s ease-in-out;
+        box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    }
+</style>
+{% endblock %}

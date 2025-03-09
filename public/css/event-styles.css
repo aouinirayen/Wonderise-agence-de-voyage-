@@ -1,0 +1,29 @@
+.event-date-time {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #666;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.event-time {
+    display: flex;
+    align-items: center;
+    color: #666;
+}
+
+.event-time i {
+    margin-right: 5px;
+    color: #13357B;
+}
+
+.event-date {
+    display: flex;
+    align-items: center;
+}
+
+.event-date i {
+    margin-right: 5px;
+    color: #13357B;
+}

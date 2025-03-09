@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmation de réservation{% endblock %}
+
+{% block body %}
+    <div class="container mt-4" style="padding-top: 10rem;">
+        <div class="card">
+            <div class="card-header">
+                <h1>Confirmation de votre réservation</h1>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success">
+                    Votre réservation a été confirmée avec succès !
+                </div>
+
+                <h2>Détails de la réservation</h2>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>Offre</th>
+                            <td>{{ reservation.offre.titre }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nombre de personnes</th>
+                            <td>{{ reservation.nombrePersonne }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date de réservation</th>
+                            <td>{{ reservation.dateReservation|date('d/m/Y H:i') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Prix total</th>
+                            <td>{{ (reservation.offre.prix * reservation.nombrePersonne)|number_format(2, ',', ' ') }} €</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="mt-4">
+                    <a href="{{ path('app_reservation_index') }}" class="btn btn-primary">Voir mes réservations</a>
+                    <a href="{{ path('app_offres') }}" class="btn btn-secondary">Retour aux offres</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,752 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .filters-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #666;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 180px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .filter-select:hover {
+            border-color: #4a90e2;
+        }
+
+        .filter-button {
+            padding: 8px 20px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(74, 144, 226, 0.2);
+        }
+
+        .filter-button:hover {
+            background-color: #357abd;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+        }
+
+        .reset-button {
+            padding: 8px 20px;
+            background-color: white;
+            color: #666;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reset-button:hover {
+            background-color: #f5f5f5;
+            transform: translateY(-1px);
+        }
+
+        .event-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .event-content {
+            padding: 20px;
+        }
+
+        .event-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .event-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .info-item i {
+            color: #4a90e2;
+            width: 20px;
+        }
+
+        .event-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+        }
+
+        .tag i {
+            font-size: 12px;
+        }
+
+        .tag.cinema {
+            background-color: #FF6B6B;
+        }
+
+        .tag.pays-bas {
+            background-color: #4ECDC4;
+        }
+
+        .tag.actif {
+            background-color: #95E1D3;
+        }
+
+        .tag.annule {
+            background-color: #FF9F68;
+        }
+
+        .tag.termine {
+            background-color: #A8A8A8;
+        }
+
+        .event-price {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4a90e2;
+            margin-bottom: 15px;
+        }
+
+        .event-seats {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .btn-voir-plus {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #4a90e2;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn-voir-plus:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+        }
+
+        .event-description {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .voir-plus-btn {
+            color: #4a90e2;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 5px;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+
+        .voir-plus-btn:hover {
+            color: #357abd;
+            text-decoration: underline;
+        }
+
+        .event-meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .event-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .event-meta-item i {
+            color: #4a90e2;
+            font-size: 14px;
+        }
+
+        .event-meta-label {
+            font-weight: 500;
+            color: #4a90e2;
+        }
+
+        .event-meta-value {
+            color: #666;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-action {
+            background-color: transparent;
+            padding: 6px 12px;
+            border-radius: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: 1.5px solid;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-like {
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+
+        .btn-like:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .btn-like.active {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-comment {
+            color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .btn-comment:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .likes-count, .comments-count {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .comments-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .comments-count {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .comment-form {
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .btn-envoyer {
+            background-color: #3b82f6;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-envoyer:hover {
+            background-color: #2563eb;
+        }
+
+        .no-comments {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .btn-favorite {
+            color: #eab308;
+            border-color: #eab308;
+        }
+
+        .btn-favorite:hover {
+            background-color: rgba(234, 179, 8, 0.1);
+        }
+
+        .btn-favorite.active {
+            background-color: #eab308;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .search-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-input,
+            .search-select,
+            .search-button,
+            .reset-button {
+                width: 100%;
+            }
+
+            .filters-row {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 10px;
+            }
+
+            .filter-select,
+            .filter-button,
+            .reset-button {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+            <h1>Liste des événements</h1>
+            <div class="d-flex gap-2">
+                <a href="{{ path('app_calendar_bundle') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-calendar"></i> Calendrier
+                </a>
+                <a href="{{ path('app_evenement_favoris') }}" class="btn btn-outline-danger">
+                    <i class="fas fa-heart"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <input type="text" 
+                   class="search-input" 
+                   placeholder="Rechercher un événement..."
+                   value="{{ app.request.query.get('searchTerm') }}">
+        </div>
+
+        <form method="get" action="{{ path('app_evenement_index') }}" class="filters-row">
+            <select name="categorie" class="filter-select">
+                <option value="">Toutes les catégories</option>
+                {% for categorie in categories %}
+                    <option value="{{ categorie }}" {% if app.request.query.get('categorie') == categorie %}selected{% endif %}>
+                        {{ categorie|capitalize }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <select name="pays" class="filter-select">
+                <option value="">Tous les pays</option>
+                {% for pays in paysList %}
+                    <option value="{{ pays }}" {% if app.request.query.get('pays') == pays %}selected{% endif %}>
+                        {{ pays }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <select name="status" class="filter-select">
+                <option value="">Tous les statuts</option>
+                <option value="actif" {% if app.request.query.get('status') == 'actif' %}selected{% endif %}>Actif</option>
+                <option value="annule" {% if app.request.query.get('status') == 'annule' %}selected{% endif %}>Annulé</option>
+                <option value="termine" {% if app.request.query.get('status') == 'termine' %}selected{% endif %}>Terminé</option>
+            </select>
+
+            <button type="submit" class="filter-button">
+                <i class="fas fa-filter"></i>
+                Filtrer
+            </button>
+
+            <a href="{{ path('app_evenement_index') }}" class="reset-button">
+                <i class="fas fa-undo"></i>
+                Réinitialiser
+            </a>
+        </form>
+
+        <div class="event-grid">
+            {% for evenement in evenements %}
+                <div class="event-card" data-id="{{ evenement.id }}">
+                    {% if evenement.photo %}
+                        <img src="{{ asset('uploads/photos/' ~ evenement.photo) }}" alt="{{ evenement.nom }}" class="event-image">
+                    {% else %}
+                        <img src="{{ asset('images/default-event.jpg') }}" alt="Default event image" class="event-image">
+                    {% endif %}
+                    
+                    <div class="event-content">
+                        <h3 class="event-title">{{ evenement.nom }}</h3>
+                        
+                        <div class="event-info">
+                            <div class="info-item">
+                                <i class="fas fa-calendar"></i>
+                                {{ evenement.date|date('d/m/Y') }}
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-clock"></i>
+                                {{ evenement.heure|date('H:i') }}
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ evenement.lieu }}
+                            </div>
+                        </div>
+
+                        <div class="event-tags">
+                            {% if evenement.categorie %}
+                                <span class="tag cinema">
+                                    <i class="fas fa-film"></i>
+                                    {{ evenement.categorie }}
+                                </span>
+                            {% endif %}
+                            {% if evenement.pays %}
+                                <span class="tag pays-bas">
+                                    <i class="fas fa-globe"></i>
+                                    {{ evenement.pays }}
+                                </span>
+                            {% endif %}
+                            {% if evenement.status %}
+                                <span class="tag {% if evenement.status == 'annule' %}annule{% elseif evenement.status == 'termine' %}termine{% else %}actif{% endif %}">
+                                    <i class="fas fa-info-circle"></i>
+                                    {{ evenement.status|capitalize }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="event-description">
+                            {{ evenement.description|length > 100 ? evenement.description|slice(0, 100) ~ '...' : evenement.description }}
+                        </div>
+                        <div class="event-price">{{ evenement.prix }}€</div>
+                        <div class="event-seats">Places disponibles : {{ evenement.placeMax }}</div>
+
+                        <a href="{{ path('app_evenement_show', {'id': evenement.id}) }}" class="btn-voir-plus">
+                            <i class="fas fa-eye"></i> Voir plus
+                        </a>
+                    </div>
+                    <div class="event-actions">
+                        <button 
+                            class="btn-action btn-like {% if evenement.isLiked %}active{% endif %}" 
+                            data-url="{{ path('app_evenement_like', {'id': evenement.id}) }}"
+                        >
+                            <i class="{% if evenement.isLiked %}fas{% else %}far{% endif %} fa-heart"></i>
+                            <span class="likes-count">{{ evenement.likesCount }}</span>
+                        </button>
+
+                        <button 
+                            class="btn-action btn-favorite {% if evenement.isFavorite %}active{% endif %}"
+                            onclick="toggleFavorite({{ evenement.id }}, this)"
+                            data-url="{{ path('app_evenement_toggle_favorite', {'id': evenement.id}) }}"
+                        >
+                            <i class="{% if evenement.isFavorite %}fas{% else %}far{% endif %} fa-star"></i>
+                            <span>Favoris</span>
+                        </button>
+
+                        <button 
+                            class="btn-action btn-comment" 
+                            onclick="toggleCommentForm({{ evenement.id }})"
+                        >
+                            <i class="far fa-comment"></i>
+                            <span class="comments-count">{{ evenement.commentaires|length }}</span>
+                        </button>
+
+                        <div id="comment-form-{{ evenement.id }}" class="comment-form">
+                            <textarea 
+                                class="comment-input" 
+                                placeholder="Écrivez votre commentaire..."
+                                required
+                            ></textarea>
+                            <button 
+                                class="btn-envoyer"
+                                data-event-id="{{ evenement.id }}"
+                            >
+                                Envoyer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    Aucun événement trouvé.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function toggleCommentForm(eventId) {
+            const form = document.getElementById(`comment-form-${eventId}`);
+            if (form) {
+                form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                if (form.style.display === 'block') {
+                    form.querySelector('textarea').focus();
+                }
+            }
+        }
+
+        async function toggleFavorite(eventId, button) {
+            try {
+                const url = button.dataset.url;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Erreur réseau');
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    button.classList.toggle('active');
+                    const icon = button.querySelector('i');
+                    icon.classList.toggle('far');
+                    icon.classList.toggle('fas');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert(error.message || 'Une erreur est survenue lors de l\'ajout aux favoris');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction pour gérer la recherche immédiate
+            function handleSearch(event) {
+                const searchTerm = event.target.value;
+                const form = document.querySelector('form');
+                const searchInput = document.createElement('input');
+                searchInput.type = 'hidden';
+                searchInput.name = 'searchTerm';
+                searchInput.value = searchTerm;
+                form.appendChild(searchInput);
+                form.submit();
+            }
+
+            // Ajouter l'écouteur d'événement sur l'input de recherche
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', handleSearch);
+            }
+
+            // Gérer les changements de filtres
+            const filterSelects = document.querySelectorAll('.filter-select');
+            filterSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    this.closest('form').submit();
+                });
+            });
+
+            // Gestion du voir plus
+            document.querySelectorAll('.voir-plus-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const description = this.previousElementSibling;
+                    const isExpanded = description.classList.contains('description-full');
+                    
+                    if (isExpanded) {
+                        description.classList.remove('description-full');
+                        description.classList.add('description-short');
+                        this.textContent = 'Voir plus';
+                    } else {
+                        description.classList.remove('description-short');
+                        description.classList.add('description-full');
+                        this.textContent = 'Voir moins';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-like').forEach(button => {
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    const url = this.dataset.url;
+                    
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Erreur réseau');
+                        }
+
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            const icon = this.querySelector('i');
+                            if (data.liked) {
+                                this.classList.add('active');
+                                icon.classList.remove('far');
+                                icon.classList.add('fas');
+                            } else {
+                                this.classList.remove('active');
+                                icon.classList.remove('fas');
+                                icon.classList.add('far');
+                            }
+                            this.querySelector('.likes-count').textContent = data.likesCount;
+                        }
+                    } catch (error) {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue');
+                    }
+                });
+            });
+
+            // Gestion des commentaires
+            document.querySelectorAll('.btn-envoyer').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const eventId = this.dataset.eventId;
+                    const commentInput = document.getElementById(`comment-input-${eventId}`);
+                    const content = commentInput.value.trim();
+                    
+                    if (!content) return;
+
+                    try {
+                        const response = await fetch(`/evenement/${eventId}/comment`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ content })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Erreur réseau');
+                        }
+
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            // Mettre à jour le compteur
+                            const commentsCount = document.querySelector(`.event-card[data-id="${eventId}"] .comments-count`);
+                            commentsCount.textContent = `Commentaires (${data.totalComments})`;
+
+                            // Réinitialiser le formulaire
+                            commentInput.value = '';
+
+                            // Afficher un message de succès
+                            alert('Commentaire ajouté avec succès !');
+                        }
+                    } catch (error) {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de l\'envoi du commentaire');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

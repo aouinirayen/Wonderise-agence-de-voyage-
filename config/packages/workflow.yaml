@@ -1,0 +1,25 @@
+framework:
+    workflows:
+        reclamation:
+            type: state_machine
+            marking_store:
+                type: method
+                property: status  # Symfony utilise getStatus() et setStatus()
+            supports:
+                - App\Entity\Reclamation
+            initial_marking: "envoyée"
+            places:
+                - "envoyée"
+                - "en cours"
+                - "traitée"
+                - "rejetée"
+            transitions:
+                start:
+                    from: "envoyée"
+                    to: "en cours"
+                resolve:
+                    from: "en cours"
+                    to: "traitée"
+                reject:
+                    from: "en cours"
+                    to: "rejetée"

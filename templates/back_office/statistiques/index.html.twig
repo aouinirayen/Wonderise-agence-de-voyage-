@@ -1,0 +1,196 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}📊 Analyse des Réclamations{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* 🌟 Effet Glassmorphism avec couleurs claires */
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.3);
+            padding: 30px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* 🎨 Dashboard Header - Bleu & Doré */
+        .dashboard-header {
+            background: linear-gradient(90deg, #0057b7 0%, #ffd700 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(0, 87, 183, 0.3);
+        }
+
+        /* 📊 Graphique */
+        .chart-container {
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            min-height: 500px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .chart-container:hover {
+            transform: scale(1.03);
+        }
+
+        /* 📄 Boutons export en bas */
+        .export-buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .export-buttons button {
+            border-radius: 30px;
+            padding: 12px 20px;
+            font-weight: bold;
+            background: #0057b7;
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .export-buttons button:hover {
+            background: #ffd700;
+            color: black;
+            transform: translateY(-3px);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 🏆 Table Styling */
+        .table thead {
+            background: #0057b7;
+            color: white;
+        }
+        .table tbody tr:nth-child(even) {
+            background: rgba(0, 87, 183, 0.1);
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-4">
+        <div class="dashboard-header">
+            <h1>📊 Analyse des réclamations les plus fréquentes</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card glassmorphism">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h2 class="card-title">🔍 Réclamations les plus fréquentes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="reclamations_chart"></canvas>
+                        </div>
+
+                        <div class="table-responsive mt-4">
+                            <table class="table table-bordered table-hover" id="reclamations_table">
+                                <thead>
+                                    <tr>
+                                        <th>📌 ID</th>
+                                        <th>📜 Type de Réclamation</th>
+                                        <th class="text-center">📊 Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reclamation in reclamations_frequentes %}
+                                        <tr>
+                                            <td>{{ loop.index }}</td>
+                                            <td>{{ reclamation.Objet|e }}</td>
+                                            <td class="text-center">{{ reclamation.count|e }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 📄 Export Buttons en bas -->
+                        <div class="export-buttons">
+                            <button onclick="exportToPDF()">📄 Exporter PDF</button>
+                            <button onclick="exportToCSV()">📊 Exporter CSV</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 📊 Graphique interactif Chart.js
+            const ctx = document.getElementById('reclamations_chart').getContext('2d');
+            const data = {
+                labels: [{% for reclamation in reclamations_frequentes %}"{{ reclamation.Objet }}",{% endfor %}],
+                datasets: [{
+                    label: "Nombre de Réclamations",
+                    data: [{% for reclamation in reclamations_frequentes %}{{ reclamation.count }},{% endfor %}],
+                    backgroundColor: ['#0057b7', '#ffd700', '#16A34A', '#F59E0B', '#DC2626'],
+                    borderColor: 'white',
+                    borderWidth: 2
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
+        });
+
+        // 📄 Export PDF optimisé
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFont("helvetica", "bold");
+            doc.text("Analyse des réclamations", 10, 10);
+            doc.autoTable({
+                head: [['ID', 'Type de Réclamation', 'Nombre']],
+                body: Array.from(document.querySelectorAll("#reclamations_table tbody tr")).map((row, index) => [
+                    index + 1,
+                    row.children[1].innerText,
+                    row.children[2].innerText
+                ]),
+                startY: 20
+            });
+            doc.save("reclamations.pdf");
+        }
+
+        // 📊 Export CSV amélioré
+        function exportToCSV() {
+            let csv = "ID,Type de Réclamation,Nombre\n";
+            document.querySelectorAll("#reclamations_table tbody tr").forEach((row, index) => {
+                let cols = row.querySelectorAll("td");
+                csv += `${index + 1},${cols[1].innerText},${cols[2].innerText}\n`;
+            });
+            let blob = new Blob([csv], { type: "text/csv" });
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "reclamations.csv";
+            link.click();
+        }
+    </script>
+{% endblock %}

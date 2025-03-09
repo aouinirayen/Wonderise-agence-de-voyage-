@@ -1,0 +1,296 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Réservations{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .reservations-container {
+            max-width: 900px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .page-header {
+            background: var(--primary-600);
+            padding: 1rem;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .reservation-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+
+        .reservation-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .reservation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background: var(--primary-50);
+            padding: 1rem;
+            border-bottom: 1px solid var(--primary-100);
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--primary-900);
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .info-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .info-item:last-child {
+            border: none;
+            padding-bottom: 0;
+        }
+
+        .info-label {
+            color: var(--gray-600);
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--gray-900);
+        }
+
+        .card-actions {
+            padding: 1rem;
+            background: var(--gray-50);
+            border-top: 1px solid var(--gray-100);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .delete-form {
+            margin: 0;
+            flex: 1;
+        }
+
+        .delete-form .btn {
+            width: 100%;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary-600);
+            color: white;
+            flex: 2;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-700);
+        }
+
+        .btn-danger {
+            background: var(--error-50);
+            color: var(--error-700);
+            border: 1px solid var(--error-200);
+            width: 100%;
+        }
+
+        .btn-danger:hover {
+            background: var(--error-100);
+            border-color: var(--error-300);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0 0 0.5rem;
+        }
+
+        .empty-message {
+            color: var(--gray-600);
+            margin: 0 0 1.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .reservation-card,
+            .empty-state {
+                background: var(--gray-800);
+            }
+
+            .card-header {
+                background: var(--primary-900);
+                border-color: var(--primary-800);
+            }
+
+            .card-title {
+                color: var(--primary-100);
+            }
+
+            .info-label {
+                color: var(--gray-400);
+            }
+
+            .info-value {
+                color: var(--gray-100);
+            }
+
+            .card-actions {
+                background: var(--gray-900);
+                border-color: var(--gray-700);
+            }
+
+            .empty-title {
+                color: var(--gray-100);
+            }
+
+            .empty-message {
+                color: var(--gray-400);
+            }
+
+            .btn-danger {
+                background: var(--error-900);
+                color: var(--error-200);
+                border-color: var(--error-700);
+            }
+
+            .btn-danger:hover {
+                background: var(--error-800);
+                border-color: var(--error-600);
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="reservations-container" style="padding-top: 10rem;">
+        <div class="page-header">
+            <h1 class="page-title">Mes Réservations</h1>
+            <a href="{{ path('app_offre_index') }}" class="btn btn-primary">Découvrir nos offres</a>
+        </div>
+
+        {% if reservations is empty %}
+            <div class="empty-state">
+                <h2 class="empty-title">Aucune réservation</h2>
+                <p class="empty-message">Vous n'avez pas encore de réservation. Découvrez nos offres de voyage !</p>
+                <a href="{{ path('app_offre_index') }}" class="btn btn-primary">Voir les offres</a>
+            </div>
+        {% else %}
+            <div class="reservation-grid">
+                {% for reservation in reservations %}
+                    <div class="reservation-card">
+                        <div class="card-header">
+                            <h2 class="card-title">{{ reservation.offre.titre }}</h2>
+                        </div>
+                        <div class="card-body">
+                            <ul class="info-list">
+                                <li class="info-item">
+                                    <span class="info-label">Dates</span>
+                                    <span class="info-value">
+                                        {{ reservation.offre.dateDebut|date('d/m/Y') }} - {{ reservation.offre.dateFin|date('d/m/Y') }}
+                                    </span>
+                                </li>
+                                <li class="info-item">
+                                    <span class="info-label">Voyageurs</span>
+                                    <span class="info-value">{{ reservation.nombrePersonne }}</span>
+                                </li>
+                                <li class="info-item">
+                                    <span class="info-label">Mode de paiement</span>
+                                    <span class="info-value">
+                                        {% if reservation.mode_paiement == 'card' %}
+                                            Carte bancaire
+                                        {% elseif reservation.mode_paiement == 'paypal' %}
+                                            PayPal
+                                        {% else %}
+                                            Virement bancaire
+                                        {% endif %}
+                                    </span>
+                                </li>
+                                <li class="info-item">
+                                    <span class="info-label">Total</span>
+                                    <span class="info-value">{{ reservation.offre.prix * reservation.nombrePersonne }}€</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-actions">
+                            <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}" class="btn btn-primary">Modifier</a>
+                            <form action="{{ path('app_reservation_delete', {'id': reservation.id}) }}" method="post" class="delete-form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservation.id) }}">
+                                <button type="submit" class="btn btn-danger">Annuler</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ experience.titre }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <!-- Affichage de l'expérience -->
+    <div class="card mb-4">
+        <img src="{{ experience.url }}" class="card-img-top" alt="{{ experience.titre }}">
+        <div class="card-body">
+            <h1 class="card-title">{{ experience.titre }}</h1>
+            <p class="card-text">{{ experience.description }}</p>
+            <div class="meta-info text-muted mb-3">
+                <i class="fas fa-map-marker-alt"></i> {{ experience.lieu }}
+                <span class="mx-2">|</span>
+                <i class="fas fa-tag"></i> {{ experience.categorie }}
+                <span class="mx-2">|</span>
+                <i class="far fa-clock"></i> {{ experience.dateCreation|date('d/m/Y H:i') }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Section commentaires -->
+    <div class="comments-section">
+        <h3 class="mb-4">Commentaires</h3>
+        
+        <!-- Formulaire de commentaire -->
+        <div class="card mb-4">
+            <div class="card-body">
+                {{ form_start(commentForm) }}
+                    <div class="mb-3">
+                        {{ form_row(commentForm.contenu, {
+                            'label': 'Votre commentaire',
+                            'attr': {
+                                'class': 'form-control',
+                                'placeholder': 'Partagez votre avis...',
+                                'rows': '3'
+                            }
+                        }) }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Publier le commentaire</button>
+                {{ form_end(commentForm) }}
+            </div>
+        </div>
+
+        <!-- Liste des commentaires -->
+        <div class="comments-list">
+            {% if commentaires is empty %}
+                <div class="alert alert-info">
+                    Aucun commentaire pour le moment. Soyez le premier à commenter !
+                </div>
+            {% else %}
+                {% for commentaire in commentaires %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    <i class="fas fa-user"></i> Utilisateur
+                                    <small class="ms-2">
+                                        <i class="far fa-clock"></i> {{ commentaire.dateCreation|date('d/m/Y H:i') }}
+                                    </small>
+                                </h6>
+                                <div class="sentiment-badge">
+                                    {% if commentaire.sentiment == 'positif' %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-smile"></i> Positif
+                                        </span>
+                                    {% elseif commentaire.sentiment == 'négatif' %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-frown"></i> Négatif
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-meh"></i> Neutre
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <p class="card-text">{{ commentaire.contenu }}</p>
+                            {% if commentaire.sentimentScore is not null %}
+                                <div class="sentiment-score mt-2">
+                                    <div class="progress" style="height: 5px;">
+                                        <div class="progress-bar {% if commentaire.sentimentScore > 0 %}bg-success{% else %}bg-danger{% endif %}" 
+                                             role="progressbar" 
+                                             style="width: {{ (commentaire.sentimentScore|abs * 100)|round }}%">
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .sentiment-badge {
+        margin-left: 1rem;
+    }
+    .sentiment-score {
+        opacity: 0.7;
+    }
+    .progress {
+        background-color: #f0f0f0;
+    }
+</style>
+{% endblock %}
+{% endblock %}

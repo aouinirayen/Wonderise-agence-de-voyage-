@@ -1,0 +1,411 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .reservation-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .reservation-header {
+            background: linear-gradient(135deg, #4f46e5, #4338ca);
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .reservation-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-label {
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .info-value {
+            font-weight: 600;
+        }
+
+        .form-section {
+            background: #fff;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .form-section:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            color: #1a237e;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e5e7eb;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            font-size: 1.5rem;
+            color: #4f46e5;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: -0.75rem;
+        }
+
+        .col-md-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0.75rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .form-label.required:after {
+            content: " *";
+            color: #dc2626;
+        }
+
+        .input-group {
+            display: flex;
+            position: relative;
+        }
+
+        .input-group-text {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #4f46e5;
+            text-align: center;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-right: none;
+            border-radius: 0.5rem 0 0 0.5rem;
+        }
+
+        .input-group .form-control {
+            border-radius: 0 0.5rem 0.5rem 0;
+            border-left: none;
+        }
+
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #1f2937;
+            background-color: #fff;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-control:focus {
+            border-color: #4f46e5;
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc2626;
+            padding-right: calc(1.5em + 0.75rem);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc2626' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc2626' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+
+        .invalid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            font-size: 0.875rem;
+            color: #dc2626;
+            background-color: #fef2f2;
+            border-radius: 0.5rem;
+            border-left: 4px solid #dc2626;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .form-control.is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+
+        .price-section {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 2rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .price-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #fff;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .price-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #4b5563;
+            font-weight: 500;
+        }
+
+        .price-label i {
+            color: #4f46e5;
+        }
+
+        .price-value {
+            font-weight: 600;
+            color: #1a237e;
+            background: #f3f4f6;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+        }
+
+        .total-price {
+            border-top: 2px solid #e5e7eb;
+            margin-top: 1rem;
+            padding-top: 1rem;
+        }
+
+        .total-price .price-item {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .total-price .price-label {
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .total-price .price-label i {
+            color: white;
+        }
+
+        .total-price .price-value {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 1.25rem;
+        }
+
+        .form-actions {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: #4f46e5;
+            color: #fff;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 2px 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+        }
+
+        .text-muted {
+            color: #6b7280;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background-color: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        @media (max-width: 768px) {
+            .reservation-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            .col-md-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            .form-section {
+                padding: 1.25rem;
+            }
+
+            .reservation-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .info-item {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="reservation-container">
+        <div class="reservation-header">
+            <h1 class="page-title">
+                <i class="fas fa-ticket-alt"></i>
+                Réservation pour "{{ offre.titre }}"
+            </h1>
+            <div class="reservation-info">
+                <div class="info-item">
+                    <i class="fas fa-tag"></i>
+                    <span class="info-label">Prix par personne :</span>
+                    <span class="info-value">{{ offre.prix }}€</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-users"></i>
+                    <span class="info-label">Places disponibles :</span>
+                    <span class="info-value">{{ offre.placesDisponibles }}</span>
+                </div>
+            </div>
+        </div>
+
+        {% if form_errors(form) %}
+            <div class="alert alert-danger">
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+
+        {{ include('FrontOffice/Reservation/_form.html.twig') }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const nombrePersonneInput = document.getElementById('reservation_nombrePersonne');
+            const totalPriceElement = document.getElementById('totalPrice');
+            const prixUnitaire = {{ offre.prix }};
+
+            function updateTotalPrice() {
+                const nombrePersonnes = parseInt(nombrePersonneInput.value) || 0;
+                const total = nombrePersonnes * prixUnitaire;
+                totalPriceElement.textContent = total > 0 ? total + '€' : '-';
+
+                const totalPriceContainer = document.querySelector('.total-price');
+                if (total > 0) {
+                    totalPriceContainer.classList.add('has-value');
+                } else {
+                    totalPriceContainer.classList.remove('has-value');
+                }
+            }
+
+            nombrePersonneInput.addEventListener('input', updateTotalPrice);
+            updateTotalPrice();
+
+            // Afficher les messages d'erreur après la soumission
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function() {
+                document.querySelectorAll('.invalid-feedback').forEach(function(element) {
+                    element.style.display = 'block';
+                });
+            });
+        });
+    </script>
+{% endblock %}

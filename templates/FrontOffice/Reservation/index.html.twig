@@ -1,0 +1,227 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes réservations{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .reservations-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .reservation-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .reservation-header {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 1.5rem;
+        }
+
+        .reservation-body {
+            padding: 1.5rem;
+        }
+
+        .reservation-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-item i {
+            color: #1a237e;
+            opacity: 0.8;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-confirmed {
+            background: #dcfce7;
+            color: #059669;
+        }
+
+        .btn-action {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            min-width: 110px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn-action i {
+            font-size: 16px;
+        }
+
+        .btn-info.btn-action {
+            background-color: #0dcaf0;
+            border-color: #0dcaf0;
+            color: white;
+        }
+
+        .btn-success.btn-action {
+            background-color: #198754;
+            border-color: #198754;
+            color: white;
+        }
+
+        .btn-danger.btn-action {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+
+        .btn-info.btn-action:hover {
+            background-color: #31d2f2;
+            border-color: #31d2f2;
+        }
+
+        .btn-success.btn-action:hover {
+            background-color: #157347;
+            border-color: #157347;
+        }
+
+        .btn-danger.btn-action:hover {
+            background-color: #bb2d3b;
+            border-color: #bb2d3b;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .btn-action {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+            }
+        }
+        
+        .card {
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="reservations-container" style="padding-top: 10rem;">
+    <h1 class="mb-4">Mes réservations</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success mb-4">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% if reservations is empty %}
+        <div class="alert alert-info">
+            Vous n'avez pas encore de réservation.
+        </div>
+    {% else %}
+        <div class="row">
+            {% for reservation in reservations %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">{{ reservation.offre.titre }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                <strong>Date de réservation:</strong> {{ reservation.dateReservation|date('d/m/Y') }}
+                            </div>
+                            <div class="mb-2">
+                                <i class="fas fa-users me-2"></i>
+                                <strong>Nombre de personnes:</strong> {{ reservation.nombrePersonne }}
+                            </div>
+                            <div class="mb-3">
+                                <i class="fas fa-euro-sign me-2"></i>
+                                <strong>Prix total:</strong> {{ (reservation.offre.prix * reservation.nombrePersonne)|number_format(2, ',', ' ') }} €
+                            </div>
+                            <div class="mb-3">
+                                <i class="fas fa-check me-2"></i>
+                                <strong>Statut:</strong> 
+                                {% if reservation.statut == 'confirmé' %}
+                                    <span class="badge bg-success">Confirmée</span>
+                                {% elseif reservation.statut == 'en_attente' %}
+                                    <span class="badge bg-warning">En attente</span>
+                                {% else %}
+                                    <span class="badge bg-info">{{ reservation.statut|capitalize }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="card-actions">
+                                <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}" 
+                                   class="btn btn-info btn-action">
+                                    <i class="fas fa-eye"></i>
+                                    <span>Voir</span>
+                                </a>
+                                
+                                <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}" 
+                                   class="btn btn-success btn-action">
+                                    <i class="fas fa-edit"></i>
+                                    <span>Modifier</span>
+                                </a>
+                                
+                                <a href="{{ path('app_reservation_delete', {'id': reservation.id}) }}" 
+                                   class="btn btn-danger btn-action">
+                                    <i class="fas fa-trash"></i>
+                                    <span>Supprimer</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Traditional Foods{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .blog-item {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            width: 50%;
+        }
+        .blog-img {
+            flex: 1;
+            width: 50%;
+        }
+        .blog-content {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 50%;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Traditional Foods Start -->
+    <div class="container-fluid blog py-5">
+        <div class="container py-5">
+            <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+                <h5 class="section-title px-3">Traditional Foods</h5>
+                <h1 class="mb-4">Explore Our Traditional Foods</h1>
+                <p class="mb-0">Discover the rich and diverse traditional foods from around the world. From unique flavors to cultural delicacies, there's something for everyone to enjoy.</p>
+            </div>
+            <div class="d-flex justify-content-end mb-3">
+                <a href="{{ path('app_traditional_food_new') }}" class="btn btn-primary">Create new Traditional Food</a>
+            </div>
+            <div class="row g-4 justify-content-center">
+                {% for traditional_food in traditional_foods %}
+                    <div class="col-md-12 d-flex">
+                        <div class="blog-item hover-card w-100">
+                            <div class="blog-img">
+                                <div class="blog-img-inner">
+                                    <img class="img-fluid w-100 rounded-top" src="{{ traditional_food.img }}" alt="{{ traditional_food.name }}" style="height: 200px; object-fit: cover;">
+                                    <div class="blog-icon">
+                                        <a href="{{ path('app_traditional_food_show', {'id': traditional_food.id}) }}" class="my-auto">
+                                            <i class="fas fa-link fa-2x text-white"></i>
+                                        </a>
+                                        <a href="{{ path('app_traditional_food_edit', {'id': traditional_food.id}) }}" class="btn btn-secondary rounded-pill py-2 px-4">Update</a>
+                                        <form method="post" action="{{ path('app_traditional_food_delete', {'id': traditional_food.id}) }}" class="d-inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ traditional_food.id) }}">
+                                            <button class="btn btn-secondary rounded-pill py-2 px-4">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="blog-content border border-top-0 rounded-bottom p-4">
+                                <p class="mb-3">Traditional Food: {{ traditional_food.name }}</p>
+                                <a href="{{ path('app_traditional_food_show', {'id': traditional_food.id}) }}" class="h4">{{ traditional_food.name }}</a>
+                                <p class="my-3">Explore the unique flavors and cultural significance of {{ traditional_food.name }}.</p>
+                                <a href="{{ path('app_traditional_food_show', {'id': traditional_food.id}) }}" class="btn btn-primary rounded-pill py-2 px-4">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- Traditional Foods End -->
+{% endblock %}      </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- Traditional Foods End -->
+{% endblock %}

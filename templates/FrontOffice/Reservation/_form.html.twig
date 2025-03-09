@@ -1,0 +1,210 @@
+{{ form_start(form, {'attr': {'class': 'reservation-form needs-validation', 'novalidate': 'novalidate'}}) }}
+    <div class="form-section">
+        <h3 class="section-title">
+            <i class="fas fa-user-circle"></i>
+            Informations Personnelles
+        </h3>
+        <div class="form-row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label required'}}) }}
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        {{ form_widget(form.nom, {
+                            'attr': {
+                                'class': 'form-control' ~ (form_errors(form.nom) ? ' is-invalid' : ''),
+                                'placeholder': 'Votre nom'
+                            }
+                        }) }}
+                        {% if form_errors(form.nom) %}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.nom) }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form_label(form.prenom, 'Prénom', {'label_attr': {'class': 'form-label required'}}) }}
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        {{ form_widget(form.prenom, {
+                            'attr': {
+                                'class': 'form-control' ~ (form_errors(form.prenom) ? ' is-invalid' : ''),
+                                'placeholder': 'Votre prénom'
+                            }
+                        }) }}
+                        {% if form_errors(form.prenom) %}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.prenom) }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="section-title">
+            <i class="fas fa-address-card"></i>
+            Coordonnées
+        </h3>
+        <div class="form-row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label required'}}) }}
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                        {{ form_widget(form.email, {
+                            'attr': {
+                                'class': 'form-control' ~ (form_errors(form.email) ? ' is-invalid' : ''),
+                                'placeholder': 'exemple@email.com'
+                            }
+                        }) }}
+                        {% if form_errors(form.email) %}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.email) }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form_label(form.telephone, 'Téléphone', {'label_attr': {'class': 'form-label'}}) }}
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-phone"></i>
+                        </span>
+                        {{ form_widget(form.telephone, {
+                            'attr': {
+                                'class': 'form-control' ~ (form_errors(form.telephone) ? ' is-invalid' : ''),
+                                'placeholder': '06 12 34 56 78'
+                            }
+                        }) }}
+                        {% if form_errors(form.telephone) %}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.telephone) }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.ville, 'Ville', {'label_attr': {'class': 'form-label required'}}) }}
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-city"></i>
+                </span>
+                {{ form_widget(form.ville, {
+                    'attr': {
+                        'class': 'form-control' ~ (form_errors(form.ville) ? ' is-invalid' : ''),
+                        'placeholder': 'Votre ville'
+                    }
+                }) }}
+                {% if form_errors(form.ville) %}
+                    <div class="invalid-feedback">
+                        {{ form_errors(form.ville) }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="section-title">
+            <i class="fas fa-ticket-alt"></i>
+            Détails de la Réservation
+        </h3>
+        <div class="form-group">
+            {{ form_label(form.nombrePersonne, 'Nombre de personnes', {'label_attr': {'class': 'form-label required'}}) }}
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-users"></i>
+                </span>
+                {{ form_widget(form.nombrePersonne, {
+                    'attr': {
+                        'class': 'form-control' ~ (form_errors(form.nombrePersonne) ? ' is-invalid' : ''),
+                        'min': 1,
+                        'max': offre.placesDisponibles,
+                        'placeholder': 'Nombre de personnes'
+                    }
+                }) }}
+                {% if form_errors(form.nombrePersonne) %}
+                    <div class="invalid-feedback">
+                        {{ form_errors(form.nombrePersonne) }}
+                    </div>
+                {% endif %}
+            </div>
+            <small class="text-muted">
+                <i class="fas fa-info-circle"></i>
+                Places disponibles : {{ offre.placesDisponibles }}
+            </small>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.commentaire, 'Commentaire (optionnel)', {'label_attr': {'class': 'form-label'}}) }}
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-comment"></i>
+                </span>
+                {{ form_widget(form.commentaire, {
+                    'attr': {
+                        'class': 'form-control' ~ (form_errors(form.commentaire) ? ' is-invalid' : ''),
+                        'rows': 3,
+                        'placeholder': 'Ajoutez un commentaire si nécessaire...'
+                    }
+                }) }}
+                {% if form_errors(form.commentaire) %}
+                    <div class="invalid-feedback">
+                        {{ form_errors(form.commentaire) }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-details">
+                <div class="price-item">
+                    <div class="price-label">
+                        <i class="fas fa-tag"></i>
+                        Prix par personne
+                    </div>
+                    <div class="price-value">{{ offre.prix }}€</div>
+                </div>
+                <div class="total-price">
+                    <div class="price-item">
+                        <div class="price-label">
+                            <i class="fas fa-calculator"></i>
+                            Total estimé
+                        </div>
+                        <div class="price-value" id="totalPrice">-</div>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i>
+                        Le prix total sera calculé en fonction du nombre de personnes
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-credit-card me-2"></i>
+            {{ button_label|default('Continuer vers le paiement') }}
+        </button>
+    </div>
+{{ form_end(form) }}

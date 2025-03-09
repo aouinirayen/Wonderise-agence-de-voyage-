@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}📌 Réclamation {% endblock %}
+
+{% block body %}
+    <!-- ✅ Affichage des messages de succès -->
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <i class="fas fa-check-circle me-2"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="card shadow-lg p-4 border-0" style="max-width: 600px; width: 100%; border-radius: 12px;">
+            <h1 class="text-center mb-4 text-primary fw-bold">📋 Nouvelle Réclamation</h1>
+
+            {{ form_start(form, { 'attr': { 'class': 'needs-validation', 'novalidate': 'novalidate' } }) }}
+
+            <!-- 📌 Champ Objet -->
+            <div class="mb-3">
+                <label for="{{ form.Objet.vars.id }}" class="form-label fw-bold"><i class="fas fa-heading me-2"></i> Objet</label>
+                {{ form_widget(form.Objet, { 'attr': {'class': 'form-control shadow-sm' ~ (form.Objet.vars.errors|length > 0 ? ' is-invalid' : '')} }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.Objet) }}
+                </div>
+            </div>
+
+            <!-- 📌 Champ Description -->
+            <div class="mb-3">
+                <label for="{{ form.Description.vars.id }}" class="form-label fw-bold"><i class="fas fa-file-alt me-2"></i> Description</label>
+                {{ form_widget(form.Description, { 'attr': {'class': 'form-control shadow-sm' ~ (form.Description.vars.errors|length > 0 ? ' is-invalid' : ''), 'rows': 4} }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.Description) }}
+                </div>
+            </div>
+
+            <!-- 📌 Champs cachés -->
+            {{ form_widget(form.Date, { 'type': 'hidden', 'value': "now"|date('Y-m-d') }) }}
+            {{ form_widget(form.status, { 'attr': {'hidden': 'hidden'}, 'value': 'en cours' }) }}
+            {{ form_widget(form.user, { 'attr': {'hidden': 'hidden'}, 'value': 1 }) }}
+
+            <!-- 📌 Bouton d'enregistrement -->
+            <button type="submit" class="btn btn-primary w-100 mt-3 fw-bold">
+                <i class="fas fa-save me-2"></i> Enregistrer la Réclamation
+            </button>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

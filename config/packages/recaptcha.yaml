@@ -1,0 +1,9 @@
+parameters:
+    google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+    google_recaptcha_secret_key: '%env(GOOGLE_RECAPTCHA_SECRET_KEY)%'
+
+karser_recaptcha3:
+    site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+    secret_key: '%env(GOOGLE_RECAPTCHA_SECRET_KEY)%'
+    score_threshold: 0.5
+    enabled: '%env(bool:GOOGLE_RECAPTCHA_ENABLED)%'

@@ -1,0 +1,150 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}📌 Liste des Réponses{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-header bg-primary text-white text-center py-4">
+                <h1 class="fw-bold text-uppercase">
+                    <i class="fas fa-comments me-2"></i> Liste des Réponses
+                </h1>
+            </div>
+
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle table-bordered border-dark">
+                        <thead class="table-dark">
+                            <tr class="text-uppercase text-center">
+                                <th>Id</th>
+                                <th>Réponse</th>
+                                <th>Date</th>
+                                <th>Réclamation</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reponse in reponses %}
+                                <tr class="table-row">
+                                    <td class="fw-bold">{{ reponse.id }}</td>
+                                    <td class="text-truncate" style="max-width: 200px;" title="{{ reponse.reponse }}">
+                                        {{ reponse.reponse }}
+                                    </td>
+                                    <td>{{ reponse.Date ? reponse.Date|date('Y-m-d') : '-' }}</td>
+                                    <td class="fw-semibold">{{ reponse.reclamation.Objet }}</td>
+                                    <td class="text-center">
+                                        <a href="{{ path('app_reponse_show', {'id': reponse.id}) }}" class="btn btn-outline-info btn-sm rounded-pill">
+                                            <i class="fas fa-eye"></i> Afficher
+                                        </a>
+                                        <a href="{{ path('app_reponse_edit', {'id': reponse.id}) }}" class="btn btn-outline-warning btn-sm rounded-pill">
+                                            <i class="fas fa-edit"></i> Modifier
+                                        </a>
+                                        <form method="post" action="{{ path('app_reponse_delete', {'id': reponse.id}) }}" style="display:inline-block" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réponse?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reponse.id) }}">
+                                            <button class="btn btn-outline-danger btn-sm rounded-pill">
+                                                <i class="fas fa-trash"></i> Supprimer
+                                            </button>
+                                        </form>
+                                        <a href="{{ path('app_reponse_new', { reclamationId:  reponse.reclamation.id }) }}" class="btn btn-success btn-lg rounded-pill shadow">
+                                            <i class="fas fa-plus-circle"></i> Créer une nouvelle réponse
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-circle"></i> Aucun enregistrement trouvé
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bouton "Créer une nouvelle réponse" en bas -->
+        <div class="text-center mt-4">
+            <a href="{{ path('app_reclamation_index') }}" class="btn btn-success btn-lg rounded-pill shadow">
+                <i class="fas fa-list"></i> Voir les réclamations pour répondre
+            </a>
+        </div>
+    </div>
+
+    {# FontAwesome pour les icônes #}
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <style>
+        /* Titre avec effet moderne */
+        .bg-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border-radius: 15px 15px 0 0;
+        }
+
+        /* Tableau stylé avec bordures noires */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .table-bordered th, .table-bordered td {
+            border: 2px solid black !important;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Animation des lignes */
+        .table-row {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .table-row:hover {
+            transform: scale(1.02);
+        }
+
+        /* Boutons élégants */
+        .btn-outline-info, .btn-outline-warning, .btn-outline-danger {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-outline-info:hover {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-outline-warning:hover {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* Bouton "Créer une nouvelle réponse" */
+        .btn-success {
+            background-color: #28a745;
+            transition: all 0.3s ease-in-out;
+            padding: 12px 25px;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .btn-lg {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+{% endblock %}

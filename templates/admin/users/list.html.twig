@@ -1,0 +1,85 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block body %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Liste des utilisateurs</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{ path('admin_home') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Utilisateurs</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Tous les utilisateurs</h3>
+                    <div class="card-tools">
+                        <a href="{{ path('admin_user_new') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Nouvel utilisateur
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Photo</th>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Pays</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>
+                                        <img src="{{ user.profilePhotoUrl ?? asset('img/default-avatar.png') }}" 
+                                             alt="Photo de profil" 
+                                             class="img-circle"
+                                             style="width: 40px; height: 40px; object-fit: cover;">
+                                    </td>
+                                    <td>{{ user.firstName }} {{ user.lastName }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.countryCode }}</td>
+                                    <td>
+                                        <span class="badge {{ user.isActive ? 'bg-success' : 'bg-secondary' }}">
+                                            {{ user.isActive ? 'Actif' : 'Inactif' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="#" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Chatbot d'Aide {% endblock %}
+
+{% block body %}
+    <h2>Besoin d'aide ? Posez votre question au chatbot 🤖</h2>
+
+    <div id="chatbox" style="width: 100%; max-width: 400px; height: 300px; border: 1px solid #ccc; overflow-y: scroll; padding: 10px;"></div>
+    <input type="text" id="user-input" placeholder="Écrivez un message..." style="width: 80%; padding: 5px;">
+    <button onclick="sendMessage()">Envoyer</button>
+
+    <script>
+        function sendMessage() {
+            let input = document.getElementById("user-input").value;
+            let chatbox = document.getElementById("chatbox");
+
+            if (input.trim() === "") return;
+
+            chatbox.innerHTML += "<p><strong>Vous:</strong> " + input + "</p>";
+
+            console.log("Envoi du message : " + input); // 🔥 Debug
+
+            fetch("/chatbot/api", {
+                method: "POST",
+                body: JSON.stringify({message: input}),
+                headers: {"Content-Type": "application/json"}
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Réponse du bot :", data.message); // 🔥 Debug
+                chatbox.innerHTML += "<p><strong>Bot:</strong> " + data.message + "</p>";
+            })
+            .catch(error => {
+                console.error("Erreur :", error);
+                chatbox.innerHTML += "<p><strong>Bot:</strong> Une erreur est survenue.</p>";
+            });
+
+            document.getElementById("user-input").value = "";
+        }
+    </script>
+{% endblock %}

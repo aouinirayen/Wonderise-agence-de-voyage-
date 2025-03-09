@@ -1,0 +1,12 @@
+{% for celebrity in celebrities %}
+    <div class="col-lg-4 col-md-6 item-container">
+        <div class="card hover-card">
+            <img src="{{ asset('uploads/images/' ~ celebrity.img) }}" class="card-img-top" alt="{{ celebrity.name }}" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+                <h5 class="card-title">{{ celebrity.name }}</h5>
+                <p class="card-text">{{ celebrity.description }}</p>
+                <a href="{{ path('app_celebrity_show', {'id': celebrity.id}) }}" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+    </div>
+{% endfor %}

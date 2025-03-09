@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Experience{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Edit Experience</h2>
+
+                {{ include('experience/_form.html.twig', {'button_label': 'Update'}) }}
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{{ path('app_experience_index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+
+                    {{ include('experience/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

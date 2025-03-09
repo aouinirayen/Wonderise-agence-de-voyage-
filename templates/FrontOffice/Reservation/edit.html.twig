@@ -1,0 +1,174 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la réservation{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .edit-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .edit-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .edit-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .edit-title {
+            font-size: 1.5rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .edit-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 2px rgba(30, 60, 114, 0.2);
+            outline: none;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: #1e3c72;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #2a5298;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="edit-container" style="padding-top: 10rem;">
+        <div class="edit-card">
+            <div class="edit-header">
+                <h1 class="edit-title">Modifier votre réservation</h1>
+            </div>
+
+            <div class="edit-body">
+                {{ form_start(form, {'attr': {'class': 'edit-form'}}) }}
+                    <div class="form-group">
+                        {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                        <div class="error-message">{{ form_errors(form.nom) }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.prenom, 'Prénom', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                        <div class="error-message">{{ form_errors(form.prenom) }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.ville, 'Ville', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.ville, {'attr': {'class': 'form-control'}}) }}
+                        <div class="error-message">{{ form_errors(form.ville) }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                        <div class="error-message">{{ form_errors(form.email) }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.telephone, 'Téléphone', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+                        <div class="error-message">{{ form_errors(form.telephone) }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.nombrePersonne, 'Nombre de personnes', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.nombrePersonne, {'attr': {'class': 'form-control', 'min': '1'}}) }}
+                        <div class="error-message">{{ form_errors(form.nombrePersonne) }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.mode_paiement, 'Mode de paiement', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.mode_paiement, {'attr': {'class': 'form-control'}}) }}
+                        <div class="error-message">{{ form_errors(form.mode_paiement) }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.commentaire, 'Commentaire', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.commentaire, {'attr': {'class': 'form-control', 'rows': '3'}}) }}
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="{{ path('app_reservation_index') }}" class="btn btn-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

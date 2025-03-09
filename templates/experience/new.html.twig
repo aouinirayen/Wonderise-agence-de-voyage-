@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Experience{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/voiceRecorder.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    {% include 'experience/_form.html.twig' with {
+        'title': 'Create New Experience',
+        'button_label': 'Create Experience',
+        'form': form
+    } %}
+{% endblock %}

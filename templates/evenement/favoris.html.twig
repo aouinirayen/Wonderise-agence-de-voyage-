@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes événements favoris{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">
+            <i class="fas fa-heart text-danger"></i>
+            Mes événements favoris
+        </h1>
+
+        {% if evenements is empty %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                Vous n'avez pas encore d'événements favoris.
+                <a href="{{ path('app_evenement_index') }}" class="alert-link">Parcourir les événements</a>
+            </div>
+        {% else %}
+            <div class="row">
+                {% for evenement in evenements %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            {% if evenement.photo %}
+                                <img src="{{ asset('uploads/photos/' ~ evenement.photo) }}" class="card-img-top" alt="{{ evenement.nom }}" style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ evenement.nom }}</h5>
+                                <p class="card-text">{{ evenement.description|slice(0, 100) }}...</p>
+                                
+                                <div class="mb-2">
+                                    <span class="badge bg-primary">{{ evenement.categorie|capitalize }}</span>
+                                    <span class="badge bg-info">{{ evenement.pays }}</span>
+                                </div>
+                                
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <i class="far fa-calendar"></i> {{ evenement.date|date('d/m/Y') }}
+                                        <br>
+                                        <i class="far fa-clock"></i> {{ evenement.heure|date('H:i') }}
+                                    </small>
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ path('app_evenement_show', {'id': evenement.id}) }}" class="btn btn-primary">
+                                    <i class="fas fa-info-circle"></i> Détails
+                                </a>
+                                <button 
+                                    class="btn btn-danger btn-remove-favorite" 
+                                    data-id="{{ evenement.id }}"
+                                    data-url="{{ path('app_evenement_toggle_favorite', {'id': evenement.id}) }}"
+                                    onclick="toggleFavorite({{ evenement.id }}, this)"
+                                >
+                                    <i class="fas fa-heart-broken"></i> Retirer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        async function toggleFavorite(eventId, button) {
+            try {
+                const url = button.dataset.url;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur réseau');
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Supprimer la carte de l'événement
+                    const card = button.closest('.col-md-4');
+                    card.remove();
+
+                    // Vérifier s'il reste des événements
+                    const remainingCards = document.querySelectorAll('.col-md-4');
+                    if (remainingCards.length === 0) {
+                        location.reload(); // Recharger pour afficher le message "aucun favori"
+                    }
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue lors du retrait des favoris');
+            }
+        }
+    </script>
+{% endblock %}

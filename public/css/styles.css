@@ -1,0 +1,150 @@
+.text-danger {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    background-color: #ffebee;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ffcdd2;
+}
+
+.text-danger ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.text-danger li {
+    color: #dc3545;
+    padding-left: 20px;
+    position: relative;
+}
+
+.text-danger li::before {
+    content: "•";
+    position: absolute;
+    left: 5px;
+    color: #dc3545;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group.has-error .form-control {
+    border-color: #dc3545;
+}
+
+.form-control:focus {
+    border-color: #842029;
+    box-shadow: none;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.error-message {
+    background-color: #ffebee;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+}
+
+.error-message ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.error-message li {
+    color: #dc3545;
+    padding-left: 15px;
+    position: relative;
+}
+
+.error-message li:before {
+    content: "•";
+    color: #dc3545;
+    position: absolute;
+    left: 0;
+}
+
+.form-control {
+    border: 1px solid #ced4da;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.invalid-feedback {
+    display: none;
+    background-color: #ffebee;
+    color: #dc3545;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+}
+
+.invalid-feedback.d-block {
+    display: block;
+}
+
+.invalid-feedback ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.invalid-feedback li {
+    padding-left: 15px;
+    position: relative;
+}
+
+.invalid-feedback li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #dc3545;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.alert-error {
+    background-color: #ffebeb;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+}
+
+.alert-error ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.alert-error li {
+    color: #dc3545;
+    padding-left: 15px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.alert-error li:before {
+    content: "•";
+    color: #dc3545;
+    position: absolute;
+    left: 0;
+}
+
+.form-control {
+    border: 1px solid #ced4da;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}

@@ -1,0 +1,554 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Guides{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .page-header {
+            background: linear-gradient(45deg, #2193b0, #6dd5ed);
+            padding: 2rem 0;
+            color: white;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .search-container {
+            margin: 2rem auto;
+            text-align: center;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1.2rem 3rem 1.2rem 1.5rem;
+            border: 2px solid #2193b0;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 4px 15px rgba(33,147,176,0.3);
+            border-color: #6dd5ed;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2193b0;
+            font-size: 1.2rem;
+        }
+        
+        .guide-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .guide-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(33,147,176,0.2);
+        }
+        
+        .guide-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            overflow: hidden;
+            border: 3px solid #2193b0;
+            position: relative;
+        }
+        
+        .guide-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .guide-card:hover .guide-image img {
+            transform: scale(1.1);
+        }
+        
+        .guide-name {
+            color: #2193b0;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .guide-details {
+            margin: 0.8rem 0;
+            color: #666;
+            text-align: left;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+        
+        .guide-details i {
+            color: #2193b0;
+            width: 20px;
+            margin-top: 4px;
+        }
+
+        .guide-details.description {
+            margin-top: 1rem;
+            font-style: italic;
+            color: #777;
+        }
+        
+        .social-links {
+            margin-top: 1.2rem;
+            justify-content: center;
+        }
+        
+        .social-links a {
+            color: #2193b0;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            color: #6dd5ed;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: #2193b0 !important;
+        }
+        
+        .guide-actions {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .guide-actions .btn {
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .guide-actions .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .btn-outline-primary {
+            padding: 10px 30px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .like-btn {
+            transition: all 0.3s ease;
+            border-width: 2px;
+        }
+
+        .like-btn:hover {
+            transform: scale(1.05);
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .like-btn:hover .badge {
+            background-color: white !important;
+            color: #dc3545;
+        }
+
+        .like-btn.liked {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .like-btn.liked .badge {
+            background-color: white !important;
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .like-btn .badge {
+            transition: all 0.3s ease;
+            background-color: #dc3545;
+            color: white;
+            font-weight: 600;
+        }
+
+        .rating-btn {
+            transition: all 0.3s ease;
+            border-width: 2px;
+        }
+
+        .rating-btn:hover {
+            transform: scale(1.05);
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .rating-btn:hover .badge {
+            background-color: #fff !important;
+            color: #000;
+        }
+
+        .rating-btn.rated {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .rating-btn.rated .badge {
+            background-color: #fff !important;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .rating-btn .badge {
+            background-color: #fff !important;
+            color: #000;
+            font-weight: 600;
+        }
+        
+        .stars-container {
+            font-size: 2rem;
+        }
+
+        .star-rating {
+            color: #ffc107;
+            cursor: pointer;
+            padding: 0 5px;
+            transition: all 0.2s ease;
+        }
+
+        .star-rating:hover,
+        .star-rating.active {
+            transform: scale(1.2);
+        }
+
+        .star-rating.fas {
+            color: #ffc107;
+        }
+
+        .star-rating:hover ~ .star-rating {
+            color: #dee2e6;
+        }
+
+        .stars-container:hover .star-rating {
+            color: #ffc107;
+        }
+
+        .stars-container .star-rating:hover ~ .star-rating {
+            color: #dee2e6;
+        }
+
+        .rating-text {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        #ratingModal .modal-content {
+            border-radius: 15px;
+        }
+
+        #ratingModal .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        #ratingModal .modal-footer {
+            border-top: none;
+            padding-top: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/guide-search.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion des likes
+            document.querySelectorAll('.like-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const guideId = this.getAttribute('data-guide-id');
+                    const likeCount = this.querySelector('.badge');
+                    
+                    fetch('/guide/' + guideId + '/like')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                likeCount.textContent = data.likes;
+                                if (data.isLiked) {
+                                    this.classList.add('liked');
+                                    this.querySelector('i').style.color = '#dc3545';
+                                } else {
+                                    this.classList.remove('liked');
+                                    this.querySelector('i').style.color = '';
+                                }
+                            }
+                        });
+                });
+            });
+
+            let selectedRating = 0;
+            let currentGuideId = null;
+            const stars = document.querySelectorAll('.star-rating');
+            const ratingText = document.querySelector('.rating-text');
+            const submitButton = document.getElementById('submitRating');
+            const ratingModal = document.getElementById('ratingModal');
+            const modal = new bootstrap.Modal(ratingModal);
+
+            // Gestionnaire pour le bouton Avis
+            document.querySelectorAll('.rating-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    currentGuideId = this.dataset.guideId;
+                    resetStars();
+                    modal.show();
+                });
+            });
+
+            // Gestionnaire pour les étoiles
+            stars.forEach(star => {
+                star.addEventListener('mouseover', function() {
+                    const rating = this.dataset.rating;
+                    highlightStars(rating);
+                });
+
+                star.addEventListener('mouseout', function() {
+                    highlightStars(selectedRating);
+                });
+
+                star.addEventListener('click', function() {
+                    selectedRating = this.dataset.rating;
+                    highlightStars(selectedRating);
+                    submitButton.disabled = false;
+                    updateRatingText(selectedRating);
+                });
+            });
+
+            // Gestionnaire pour le bouton Envoyer
+            submitButton.addEventListener('click', function() {
+                submitRating(currentGuideId, selectedRating);
+            });
+
+            // Réinitialiser le modal quand il est fermé
+            ratingModal.addEventListener('hidden.bs.modal', function() {
+                resetStars();
+                selectedRating = 0;
+                currentGuideId = null;
+                submitButton.disabled = true;
+                ratingText.textContent = 'Cliquez sur une étoile pour noter';
+            });
+
+            function highlightStars(rating) {
+                stars.forEach(star => {
+                    const starRating = parseInt(star.dataset.rating);
+                    if (starRating <= rating) {
+                        star.classList.remove('far');
+                        star.classList.add('fas');
+                    } else {
+                        star.classList.remove('fas');
+                        star.classList.add('far');
+                    }
+                });
+            }
+
+            function resetStars() {
+                stars.forEach(star => {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                });
+            }
+
+            function updateRatingText(rating) {
+                const texts = {
+                    1: 'Pas satisfait',
+                    2: 'Peu satisfait',
+                    3: 'Satisfait',
+                    4: 'Très satisfait',
+                    5: 'Excellent'
+                };
+                ratingText.textContent = texts[rating] || 'Cliquez sur une étoile pour noter';
+            }
+
+            function submitRating(guideId, rating) {
+                fetch(`/guide/${guideId}/rate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token('rate-guide') }}'
+                    },
+                    body: JSON.stringify({ rating: rating })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Mettre à jour le compteur d'avis avec la nouvelle valeur du serveur
+                        const ratingBtn = document.querySelector(`.rating-btn[data-guide-id="${guideId}"]`);
+                        const badge = ratingBtn.querySelector('.badge');
+                        badge.textContent = data.nombreAvis;
+                        
+                        // Fermer le modal
+                        modal.hide();
+                        
+                        // Afficher un message de succès
+                        alert('Merci pour votre avis !');
+                        
+                        // Recharger la page pour mettre à jour les statistiques
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        alert(data.message || 'Une erreur est survenue. Veuillez réessayer.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Une erreur est survenue. Veuillez réessayer.');
+                });
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <div class="container">
+            <h1>Nos Guides</h1>
+            <p>Découvrez nos guides professionnels</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Search Section -->
+        <div class="search-container">
+            <input type="text" 
+                   id="guide-search" 
+                   class="search-input" 
+                   placeholder="Rechercher un guide par nom, prénom, email, téléphone..."
+                   autocomplete="off">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+
+        <div id="guides-list" class="row">
+            {% for guide in guides %}
+                <div class="col-md-4">
+                    <div class="guide-card">
+                        <div class="guide-image">
+                            {% if guide.photo %}
+                                <img src="{{ asset('uploads/photos/' ~ guide.photo) }}" alt="{{ guide.nom }} {{ guide.prenom }}">
+                            {% else %}
+                                <img src="{{ asset('images/default-profile.jpg') }}" alt="Photo par défaut">
+                            {% endif %}
+                        </div>
+                        <h3 class="guide-name">{{ guide.nom }} {{ guide.prenom }}</h3>
+                        <div class="guide-details">
+                            <i class="fas fa-envelope"></i>
+                            <span>{{ guide.email }}</span>
+                        </div>
+                        <div class="guide-details">
+                            <i class="fas fa-phone"></i>
+                            <span>{{ guide.numTelephone }}</span>
+                        </div>
+                        <div class="guide-details description">
+                            <i class="fas fa-info-circle"></i>
+                            <span>{{ guide.description|length > 100 ? guide.description|slice(0, 100) ~ '...' : guide.description }}</span>
+                        </div>
+                        {% if guide.facebook or guide.instagram %}
+                            <div class="guide-details social-links">
+                                {% if guide.facebook %}
+                                    <a href="{{ guide.facebook }}" target="_blank" class="me-2">
+                                        <i class="fab fa-facebook"></i>
+                                    </a>
+                                {% endif %}
+                                {% if guide.instagram %}
+                                    <a href="{{ guide.instagram }}" target="_blank">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        <div class="guide-actions mt-3">
+                            <a href="{{ path('app_guide_show', {'id': guide.id}) }}" class="btn btn-primary btn-sm me-2">
+                                <i class="fas fa-eye"></i> Voir
+                            </a>
+                            <button class="btn btn-outline-danger btn-sm like-btn me-2 {% if guide.nombreAvis > 0 %}liked{% endif %}" data-guide-id="{{ guide.id }}">
+                                <i class="fas fa-heart" {% if guide.nombreAvis > 0 %}style="color: #dc3545;"{% endif %}></i> J'aime
+                                <span class="badge bg-danger ms-1">{{ guide.nombreAvis }}</span>
+                            </button>
+                            <button class="btn btn-outline-warning btn-sm rating-btn" data-guide-id="{{ guide.id }}">
+                                <i class="fas fa-star"></i> Avis
+                                <span class="badge text-dark ms-1">{{ guide.nombreAvis }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if guides|length > 6 %}
+            <div class="text-center mt-4">
+                <a href="{{ path('app_guide_index') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-plus"></i> Voir plus
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Rating Modal -->
+    <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ratingModalLabel">Donner votre avis</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="stars-container mb-3">
+                        <i class="far fa-star star-rating" data-rating="1"></i>
+                        <i class="far fa-star star-rating" data-rating="2"></i>
+                        <i class="far fa-star star-rating" data-rating="3"></i>
+                        <i class="far fa-star star-rating" data-rating="4"></i>
+                        <i class="far fa-star star-rating" data-rating="5"></i>
+                    </div>
+                    <p class="rating-text mb-0">Cliquez sur une étoile pour noter</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" id="submitRating" disabled>Envoyer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

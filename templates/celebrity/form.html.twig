@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">{{ title }}</h1>
+
+        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <label for="{{ form.name.vars.id }}">{{ form_label(form.name) }}</label>
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.name) }}
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.img.vars.id }}">{{ form_label(form.img) }}</label>
+                            {{ form_widget(form.img, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.img) }}
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.description.vars.id }}">{{ form_label(form.description) }}</label>
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.description) }}
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.work.vars.id }}">{{ form_label(form.work) }}</label>
+                            {{ form_widget(form.work, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.work) }}
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.country.vars.id }}">{{ form_label(form.country) }}</label>
+                            {{ form_widget(form.country, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.country) }}
+                            </div>
+                        </div>
+                        <!-- New fields -->
+                        <div class="form-group mb-3">
+                            <label for="{{ form.dateOfBirth.vars.id }}">{{ form_label(form.dateOfBirth) }}</label>
+                            {{ form_widget(form.dateOfBirth, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.dateOfBirth) }}
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.nationality.vars.id }}">{{ form_label(form.nationality) }}</label>
+                            {{ form_widget(form.nationality, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.nationality) }}
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.notableWorks.vars.id }}">{{ form_label(form.notableWorks) }}</label>
+                            {{ form_widget(form.notableWorks, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.notableWorks) }}
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.personalLife.vars.id }}">{{ form_label(form.personalLife) }}</label>
+                            {{ form_widget(form.personalLife, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.personalLife) }}
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.netWorth.vars.id }}">{{ form_label(form.netWorth) }}</label>
+                            {{ form_widget(form.netWorth, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.netWorth) }}
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-primary btn-lg">{{ button_label|default('Submit') }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

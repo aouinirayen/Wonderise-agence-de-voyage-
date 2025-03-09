@@ -1,0 +1,82 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">{{ title }}</h1>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        {% if not form.vars.valid %}
+                            <div class="alert alert-danger">
+                                {{ form_errors(form) }}
+                            </div>
+                        {% endif %}
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.name.vars.id }}">{{ form_label(form.name) }}</label>
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control'}, 'required': false}) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.name) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.img.vars.id }}">{{ form_label(form.img) }}</label>
+                            {{ form_widget(form.img, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'accept': 'image/*'
+                                },
+                                'required': false
+                            }) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.img) }}
+                            </div>
+                            {% if art.img %}
+                                <img src="{{ asset('uploads/images/' ~ art.img) }}" alt="Current image" class="mt-2" style="max-width: 200px">
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.description.vars.id }}">{{ form_label(form.description) }}</label>
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control'}, 'required': false}) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.description) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="{{ form.country.vars.id }}">{{ form_label(form.country) }}</label>
+                            {{ form_widget(form.country, {'attr': {'class': 'form-control'}, 'required': false}) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.country) }}
+                            </div>
+                        </div>
+
+                        {{ form_rest(form) }}
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{{ path('app_art_index1') }}" class="btn btn-secondary me-md-2">Back to list</a>
+                            <button class="btn btn-primary btn-lg">{{ button_label|default('Save') }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

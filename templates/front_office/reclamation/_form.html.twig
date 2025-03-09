@@ -1,0 +1,13 @@
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+{{ form_start(form, { 'attr': { 'class': 'needs-validation', 'novalidate': 'novalidate' } }) }}
+
+  <div class="row g-3">
+    {# Affichage de tous les champs avec les classes Bootstrap appropriées #}
+    {{ form_widget(form) }}
+  </div>
+
+  <div class="mt-4">
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Save') }}</button>
+  </div>
+
+{{ form_end(form) }}

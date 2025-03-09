@@ -1,0 +1,192 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Countries{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .blog-item {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            width: 100%;
+        }
+        .blog-img {
+            flex: 1;
+            width: 50%;
+            position: relative;
+        }
+        .blog-content {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 50%;
+        }
+        .search-container {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+        .search-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        .country-item {
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Countries Start -->
+    <div class="container-fluid blog py-5">
+        <div class="container py-5">
+            <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+                <h5 class="section-title px-3">Countries</h5>
+                <h1 class="mb-4">Explore Our Countries</h1>
+                <p class="mb-0">Discover the beauty and diversity of countries around the world. From stunning landscapes to rich cultures, there's something for everyone to explore.</p>
+            </div>
+            
+            <div class="search-container">
+                <input type="text" id="countrySearch" class="search-input" placeholder="Start typing to search countries...">
+            </div>
+           
+            <div class="row g-4 justify-content-center" id="countriesContainer">
+                {% for country in countries %}
+                    <div class="col-md-12 d-flex country-item">
+                        <div class="blog-item hover-card w-100">
+                            <div class="blog-img">
+                                <div class="image-wrapper">
+                                    <img class="img-fluid w-100 rounded-top" src="{{ asset('uploads/images/' ~ country.img) }}" alt="{{ country.name }}" style="height: 200px; object-fit: cover;">
+                                </div>
+                                <div class="blog-icon">
+                                    <a href="{{ path('app_country_show', {'id': country.id}) }}" class="my-auto">
+                                        <i class="fas fa-link fa-2x text-white"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="blog-content border border-top-0 rounded-bottom p-4">
+                                <p class="mb-3">Country: {{ country.name }}</p>
+                                <a href="{{ path('app_country_show', {'id': country.id}) }}" class="h4">{{ country.name }}</a>
+                                <p class="my-3">Explore the unique culture and landscapes of {{ country.name }}.</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="{{ path('app_country_show', {'id': country.id}) }}" class="btn btn-primary rounded-pill py-2 px-4">View Details</a>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ path('app_country_rate', {'id': country.id, 'type': 'like'}) }}" class="btn btn-success rounded-pill">
+                                            <i class="fas fa-thumbs-up"></i> 
+                                            <span class="badge bg-light text-dark like-count">{{ render(controller('App\\Controller\\CountryController::getLikeCount', {'country': country})) }}</span>
+                                        </a>
+                                        <a href="{{ path('app_country_rate', {'id': country.id, 'type': 'dislike'}) }}" class="btn btn-danger rounded-pill">
+                                            <i class="fas fa-thumbs-down"></i>
+                                            <span class="badge bg-light text-dark dislike-count">{{ render(controller('App\\Controller\\CountryController::getDislikeCount', {'country': country})) }}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="d-flex justify-content-center mt-4">
+                <div class="navigation">
+                    {{ knp_pagination_render(pagination, '@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Countries End -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('countrySearch');
+            const countriesContainer = document.getElementById('countriesContainer');
+            const originalContent = countriesContainer.innerHTML;
+            let debounceTimer;
+
+            function performSearch(searchTerm) {
+                fetch(`{{ path('api_country_search') }}?q=${encodeURIComponent(searchTerm)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success && data.countries) {
+                        if (data.countries.length === 0) {
+                            countriesContainer.innerHTML = '<div class="col-12 text-center"><h3>No countries found</h3></div>';
+                        } else {
+                            countriesContainer.innerHTML = data.countries.map(country => `
+                                <div class="col-md-12 d-flex country-item">
+                                    <div class="blog-item hover-card w-100">
+                                        <div class="blog-img">
+                                            <div class="image-wrapper">
+                                                <img class="img-fluid w-100 rounded-top" src="{{ asset('uploads/images/') }}/${country.img}" alt="${country.name}" style="height: 200px; object-fit: cover;">
+                                            </div>
+                                            <div class="blog-icon">
+                                                <a href="${country.url}" class="my-auto">
+                                                    <i class="fas fa-link fa-2x text-white"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="blog-content border border-top-0 rounded-bottom p-4">
+                                            <p class="mb-3">Country: ${country.name}</p>
+                                            <a href="${country.url}" class="h4">${country.name}</a>
+                                            <p class="my-3">Explore the unique culture and landscapes of ${country.name}.</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <a href="${country.url}" class="btn btn-primary rounded-pill py-2 px-4">View Details</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    countriesContainer.innerHTML = '<div class="col-12 text-center"><h3>Error loading countries</h3></div>';
+                });
+            }
+
+            searchInput.addEventListener('input', function(e) {
+                clearTimeout(debounceTimer);
+                const searchTerm = this.value.trim();
+                
+                if (searchTerm === '') {
+                    countriesContainer.innerHTML = originalContent;
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    performSearch(searchTerm);
+                }, 300);
+            });
+
+            // Focus the search input when the page loads
+            searchInput.focus();
+        });
+    </script>
+{% endblock %}

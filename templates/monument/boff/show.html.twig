@@ -1,0 +1,66 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}{{ monument.name }} - Monument Details{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .image-wrapper::after {
+            content: 'wonderwise';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 2em;
+            color: rgba(0, 0, 0, 0.5);
+            white-space: nowrap;
+            pointer-events: none;
+            font-family: Arial, sans-serif;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h1 class="card-title mb-0 text-white">{{ monument.name }}</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="image-wrapper">
+                          <img class="img-fluid w-100 rounded-top" src="{{ asset('uploads/images/' ~ monument.img) }}" alt="{{ monument.name }}" style="height: 200px; object-fit: cover;">                    
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p class="lead">{{ monument.description }}</p>
+                    <div class="mt-4">
+                        <h2 class="h4 text-secondary">Country</h2>
+                        <p class="text-muted">{{ monument.country.name }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ path('app_monument_edit1', {'id': monument.id}) }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <form method="post" action="{{ path('app_monument_delete', {'id': monument.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ monument.id) }}">
+                    <button class="btn btn-danger btn-lg">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

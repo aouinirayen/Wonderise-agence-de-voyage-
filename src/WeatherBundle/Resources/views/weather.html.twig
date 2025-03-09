@@ -1,0 +1,28 @@
+{% if weather.success %}
+    <div class="weather-card">
+        <div class="text-center">
+            <div class="weather-icon">
+                <i class="fas fa-{{ weather.icon }}"></i>
+            </div>
+            <div class="weather-temp">
+                {{ weather.temperature }}°C
+            </div>
+            <div class="weather-desc">
+                {{ weather.description }}
+            </div>
+            <div class="weather-season text-muted">
+                {{ weather.season|capitalize }}
+            </div>
+        </div>
+        <div class="weather-details mt-3">
+            <div class="weather-detail-item">
+                <i class="fas fa-tint"></i>
+                <span>{{ weather.humidity }}% Humidité</span>
+            </div>
+            <div class="weather-detail-item">
+                <i class="fas fa-wind"></i>
+                <span>{{ weather.wind }} km/h</span>
+            </div>
+        </div>
+    </div>
+{% endif %}

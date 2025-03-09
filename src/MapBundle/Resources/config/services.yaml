@@ -1,0 +1,12 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    App\MapBundle\Service\MapService:
+        arguments:
+            $apiKey: '%env(default::MAP_API_KEY)%'
+
+    App\MapBundle\Twig\MapExtension:
+        tags: ['twig.extension']

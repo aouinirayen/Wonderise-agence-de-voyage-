@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmation de paiement{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-5 text-center">
+                <div class="mb-4">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                </div>
+                <div class="alert alert-success">
+                    <h2 class="text-center mb-4">Paiement confirmé !</h2>
+                    <p class="text-center">Votre réservation a été effectuée avec succès.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0">Détails de la réservation</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-md-6 text-md-end"><strong>Numéro de réservation :</strong></div>
+                            <div class="col-md-6 text-md-start">#{{ reservation.id }}</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6 text-md-end"><strong>Destination :</strong></div>
+                            <div class="col-md-6 text-md-start">{{ reservation.offre.titre }} - {{ reservation.offre.pays }}</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6 text-md-end"><strong>Nombre de personnes :</strong></div>
+                            <div class="col-md-6 text-md-start">{{ reservation.nombrePersonne }}</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6 text-md-end"><strong>Montant total payé :</strong></div>
+                            <div class="col-md-6 text-md-start">{{ reservation.nombrePersonne * reservation.offre.prix }}€</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6 text-md-end"><strong>Date de paiement :</strong></div>
+                            <div class="col-md-6 text-md-start">{{ reservation.datePaiement|date('d/m/Y H:i') }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <p>Conservez précieusement ces informations pour toute référence ultérieure.</p>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{{ path('app_reservation_facture', {'id': reservation.id}) }}" class="btn btn-danger btn-lg me-md-2" target="_blank">
+                        <i class="fas fa-file-pdf me-2"></i>Télécharger la facture
+                    </a>
+                    <a href="{{ path('app_reservation_index') }}" class="btn btn-primary btn-lg me-md-2">
+                        <i class="fas fa-check-circle me-2"></i>Confirmer et voir mes réservations
+                    </a>
+                    <a href="{{ path('app_offres') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-home me-2"></i>Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

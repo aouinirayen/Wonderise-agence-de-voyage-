@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier des événements{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('calendar') }}
+    <style>
+        #calendar-holder {
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .fc-event {
+            cursor: pointer;
+            padding: 5px;
+        }
+        .fc-event-title {
+            font-weight: bold;
+        }
+        .fc-event-time {
+            font-size: 0.9em;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Calendrier des événements</h1>
+        <div id="calendar-holder"></div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('calendar') }}
+{% endblock %}

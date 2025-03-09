@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Réclamation</title>
+
+    <!-- Bootstrap CSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Arial', sans-serif;
+        }
+        .card {
+            margin-top: 30px;
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            font-weight: bold;
+            padding: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .card-body {
+            padding: 25px;
+        }
+        .response-box {
+            background-color: #e9f7ef;
+            border-left: 6px solid #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .status-badge {
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+        .pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .resolved {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Réclamation de {{ nom }}</span>
+                    <span class="status-badge {% if reponse is not empty %}resolved{% else %}pending{% endif %}">
+                        {% if reponse is not empty %}✔️ Résolue{% else %}⏳ En attente{% endif %}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title text-primary">{{ objet }}</h4>
+                    <p class="card-text"><strong>Description :</strong> {{ description }}</p>
+
+                    {% if reponse is not empty %}
+                        <div class="response-box">
+                            <p><strong>Réponse de l'Admin :</strong></p>
+                            <p>{{ reponse }}</p>
+                        </div>
+                    {% else %}
+                        <p class="text-muted fst-italic">🔔 Votre réclamation est en cours de traitement...</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-muted text-end">
+                    <small>📅 Déposée le {{ date|date('d/m/Y H:i') }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

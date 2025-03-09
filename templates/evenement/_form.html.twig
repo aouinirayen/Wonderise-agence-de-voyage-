@@ -1,0 +1,10 @@
+{{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+    {% if evenement.photo %}
+        <div class="mb-3">
+            <img src="{{ asset('uploads/photos/' ~ evenement.photo) }}" alt="Current photo" class="img-thumbnail" style="max-width: 200px">
+            <p class="text-muted">Photo actuelle</p>
+        </div>
+    {% endif %}
+    {{ form_widget(form) }}
+    <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}

@@ -1,0 +1,40 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}{{ art.name }} - Art Details{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h1 class="card-title mb-0 text-white">{{ art.name }}</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{{ asset('uploads/images/' ~ art.img) }}" alt="{{ art.name }}" class="img-fluid rounded">
+                </div>
+                <div class="col-md-6">
+                    <p class="lead">{{ art.description }}</p>
+                    <div class="mt-4">
+                        <h2 class="h4 text-secondary">Country</h2>
+                        <p class="text-muted">{{ art.country.name }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ path('app_art_edit', {'id': art.id}) }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <form method="post" action="{{ path('app_art_delete', {'id': art.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ art.id) }}">
+                    <button class="btn btn-danger btn-lg">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

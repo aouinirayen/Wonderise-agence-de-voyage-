@@ -1,0 +1,178 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}📌 Gestion des Réclamations{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary fw-bold">📋 Liste des Réclamations</h1>
+        <button id="theme-toggle" class="btn btn-outline-dark">
+            <i class="fas fa-moon"></i> Mode Sombre
+        </button>
+    </div>
+
+    <!-- 🔍 Formulaire de recherche -->
+    <form method="get" class="row g-3 align-items-end mb-4">
+        <div class="col-md-4">
+            <label for="keyword" class="form-label">🔎 Rechercher :</label>
+            <input type="text" name="keyword" class="form-control" id="keyword" placeholder="Saisir un mot-clé..." value="{{ keyword }}">
+        </div>
+
+        <div class="col-md-3">
+            <label for="status" class="form-label">📌 Statut :</label>
+            <select name="status" class="form-select" id="status">
+                <option value="">-- Tous --</option>
+                <option value="en cours" {% if status == 'en cours' %}selected{% endif %}>En cours</option>
+                <option value="traitée" {% if status == 'traitée' %}selected{% endif %}>Traitée</option>
+                <option value="envoyée" {% if status == 'envoyée' %}selected{% endif %}>Envoyée</option>
+                <option value="rejetée" {% if status == 'rejetée' %}selected{% endif %}>Rejetée</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label for="order" class="form-label">📅 Trier par :</label>
+            <select name="order" class="form-select" id="order">
+                <option value="DESC" {% if order == 'DESC' %}selected{% endif %}>Récentes en premier</option>
+                <option value="ASC" {% if order == 'ASC' %}selected{% endif %}>Anciennes en premier</option>
+            </select>
+        </div>
+
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Rechercher
+            </button>
+        </div>
+    </form>
+
+    <!-- 📌 Tableau des réclamations -->
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-dark text-center sticky-header">
+                <tr>
+                    <th>ID</th>
+                    <th>Objet</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Client</th>
+                    <th>Actions</th>
+                    <th>Etat d'avancement</th>  {# Colonne pour les transitions #}
+                </tr>
+            </thead>
+            <tbody>
+            {% for reclamation in pagination %}
+                <tr class="table-row">
+                    <td class="text-center fw-bold">{{ reclamation.id }}</td>
+                    <td>{{ reclamation.Objet }}</td>
+                    <td>{{ reclamation.Description }}</td>
+                    <td class="text-center">{{ reclamation.Date ? reclamation.Date|date('Y-m-d') : 'N/A' }}</td>
+
+                    <!-- Affichage du statut avec badges -->
+                    <td class="text-center">
+                        <span class="px-3 py-2 fw-semibold text-uppercase d-inline-flex align-items-center rounded-3 shadow-sm
+                            {% if reclamation.status == 'traitée' %} bg-success text-light
+                            {% elseif reclamation.status == 'rejetée' %} bg-danger text-light
+                            {% elseif reclamation.status == 'en cours' %} bg-warning text-dark
+                            {% elseif reclamation.status == 'envoyée' %} bg-info text-light
+                            {% else %} bg-secondary text-light {% endif %}">
+                            <i class="fas 
+                                {% if reclamation.status == 'traitée' %} fa-check-circle
+                                {% elseif reclamation.status == 'rejetée' %} fa-times-circle
+                                {% elseif reclamation.status == 'en cours' %} fa-hourglass-half
+                                {% elseif reclamation.status == 'envoyée' %} fa-paper-plane
+                                {% else %} fa-question-circle {% endif %}
+                            me-2"></i> 
+                            {{ reclamation.status | capitalize }}
+                        </span>
+                    </td>
+
+                    <td class="text-center">{{ reclamation.user }}</td>
+
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('app_reclamation_show_back', {'id': reclamation.id}) }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('app_reclamation_delete', {'id': reclamation.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+
+                    <!-- Boutons pour appliquer les transitions -->
+                    <td class="text-center">
+                        <div class="btn-group">
+                            {% for transition in reclamation.availableTransitions %}
+                                <a href="{{ path('app_reclamation_transition', { id: reclamation.id, transition: transition }) }}"
+                                   class="btn btn-sm btn-primary">
+                                    {{ transition | capitalize }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted">Aucune réclamation trouvée.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-4 d-flex justify-content-center">
+        {{ knp_pagination_render(pagination, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+    </div>
+</div>
+
+<!-- 🌙 Script pour le Mode Sombre -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        if (localStorage.getItem('dark-mode') === 'enabled') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i> Mode Clair';
+        }
+
+        themeToggle.addEventListener('click', function () {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i> Mode Clair';
+                localStorage.setItem('dark-mode', 'enabled');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i> Mode Sombre';
+                localStorage.setItem('dark-mode', 'disabled');
+            }
+        });
+    });
+</script>
+
+<!-- 🎨 Styles Mode Sombre -->
+<style>
+    .dark-mode {
+        background-color: #1e1e1e;
+        color: #f8f9fa;
+    }
+    .dark-mode .table {
+        background-color: #343a40;
+        color: white;
+    }
+    .dark-mode .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    .dark-mode .btn-outline-dark {
+        background-color: white;
+        color: black;
+    }
+    .dark-mode .table-dark {
+        background-color: #454d55;
+    }
+</style>
+{% endblock %}

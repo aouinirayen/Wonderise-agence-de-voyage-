@@ -1,0 +1,435 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Liste des Offres{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 0 15px;
+        }
+        .charts-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .column-chart {
+            flex: 1;
+        }
+        .pie-chart {
+            width: 400px;
+        }
+        #columnChart {
+            width: 100%;
+            height: 300px;
+        }
+        #pieChart {
+            width: 100%;
+            height: 300px;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        }
+        .sortable {
+            cursor: pointer;
+        }
+        th.asc .fa-sort-up {
+            color: #0d6efd;
+        }
+        th.desc .fa-sort-down {
+            color: #0d6efd;
+        }
+        .filter-section {
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        .filter-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+        .filter-item {
+            position: relative;
+        }
+        .filter-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-weight: 500;
+            display: block;
+        }
+        .filter-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        .filter-input:hover {
+            border-color: #cbd5e1;
+            background: #fff;
+        }
+        .filter-input:focus {
+            border-color: #4361ee;
+            background: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        .filter-input::placeholder {
+            color: #94a3b8;
+        }
+        .filter-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+        .search-input {
+            padding-left: 45px !important;
+        }
+        .filter-select {
+            width: 100%;
+            padding: 12px 35px 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background-color: #f8fafc;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+        }
+        .filter-select:focus {
+            border-color: #4361ee;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            outline: none;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            drawColumnChart();
+            drawPieChart();
+        }
+
+        function drawColumnChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Offre', 'Places Disponibles', 'Prix (€)'],
+                {% for offre in offres %}
+                ['{{ offre.titre }}', {{ offre.placesDisponibles }}, {{ offre.prix }}],
+                {% endfor %}
+            ]);
+
+            var options = {
+                title: 'Places Disponibles et Prix par Offre',
+                titleTextStyle: {
+                    color: '#2c3e50',
+                    fontSize: 16,
+                    bold: true
+                },
+                height: 300,
+                backgroundColor: { fill:'transparent' },
+                animation: {
+                    startup: true,
+                    duration: 1000,
+                    easing: 'out'
+                },
+                colors: ['#2196F3', '#FF9800'],
+                series: {
+                    0: {targetAxisIndex: 0},
+                    1: {targetAxisIndex: 1}
+                },
+                vAxes: {
+                    0: {
+                        title: 'Places Disponibles',
+                        textStyle: {color: '#2196F3'},
+                        titleTextStyle: {color: '#2196F3'}
+                    },
+                    1: {
+                        title: 'Prix (€)',
+                        textStyle: {color: '#FF9800'},
+                        titleTextStyle: {color: '#FF9800'}
+                    }
+                },
+                bar: {groupWidth: '70%'},
+                chartArea: {
+                    width: '85%',
+                    height: '75%'
+                }
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('columnChart'));
+            chart.draw(data, options);
+        }
+
+        function drawPieChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Destination', 'Places'],
+                {% for offre in offres %}
+                ['{{ offre.titre }}', {{ offre.placesDisponibles }}],
+                {% endfor %}
+            ]);
+
+            var options = {
+                title: 'Répartition des Places',
+                pieHole: 0.4,
+                backgroundColor: { fill:'transparent' },
+                colors: ['#2196F3', '#FF9800', '#4CAF50'],
+                legend: {
+                    position: 'bottom',
+                    textStyle: { fontSize: 11 }
+                },
+                chartArea: {
+                    width: '100%',
+                    height: '80%'
+                }
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('pieChart'));
+            chart.draw(data, options);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            const maxPriceInput = document.querySelector('input[placeholder="Filtrer par prix maximum"]');
+            const minPlacesInput = document.querySelector('input[placeholder="Filtrer par places minimum"]');
+            const tbody = document.querySelector('tbody');
+            let timeout = null;
+
+            function getStatusBadge(placesDisponibles) {
+                if (placesDisponibles <= 0) {
+                    return '<span class="badge bg-danger">Complet</span>';
+                } else if (placesDisponibles < 5) {
+                    return '<span class="badge bg-warning">Places limitées</span>';
+                } else {
+                    return '<span class="badge bg-success">Disponible</span>';
+                }
+            }
+
+            function performSearch() {
+                const searchValue = searchInput.value.trim().toLowerCase();
+                const maxPrice = maxPriceInput.value;
+                const minPlaces = minPlacesInput.value;
+
+                // Get all rows
+                const rows = Array.from(document.querySelectorAll('#offreTable tbody tr'));
+                
+                rows.forEach(row => {
+                    const title = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                    const price = parseFloat(row.querySelector('td:nth-child(3)').textContent);
+                    const places = parseInt(row.querySelector('td:nth-child(4)').textContent);
+                    
+                    const matchesSearch = !searchValue || title.includes(searchValue);
+                    const matchesPrice = !maxPrice || price <= parseFloat(maxPrice);
+                    const matchesPlaces = !minPlaces || places >= parseInt(minPlaces);
+                    
+                    row.style.display = matchesSearch && matchesPrice && matchesPlaces ? '' : 'none';
+                });
+            }
+
+            // Debounce search
+            function debounceSearch() {
+                clearTimeout(timeout);
+                timeout = setTimeout(performSearch, 300);
+            }
+
+            // Add event listeners
+            searchInput.addEventListener('input', debounceSearch);
+            maxPriceInput.addEventListener('input', debounceSearch);
+            minPlacesInput.addEventListener('input', debounceSearch);
+
+            const tableHeaders = document.querySelectorAll('#offreTable thead th');
+            
+            tableHeaders.forEach((header, index) => {
+                // Skip image and actions columns
+                if (index === 0 || index === 5) return;
+                
+                // Add sort cursor and icon
+                header.style.cursor = 'pointer';
+                header.innerHTML += ' <i class="fas fa-sort"></i>';
+                
+                header.addEventListener('click', function() {
+                    const table = document.querySelector('#offreTable');
+                    const tbody = table.querySelector('tbody');
+                    const rows = Array.from(tbody.getElementsByTagName('tr'));
+                    
+                    // Get current sort direction
+                    const isAscending = header.classList.contains('asc');
+                    
+                    // Reset all headers
+                    tableHeaders.forEach(th => {
+                        th.classList.remove('asc', 'desc');
+                        const icon = th.querySelector('i');
+                        if (icon) icon.className = 'fas fa-sort';
+                    });
+                    
+                    // Set new sort direction
+                    header.classList.add(isAscending ? 'desc' : 'asc');
+                    const icon = header.querySelector('i');
+                    icon.className = `fas fa-sort-${isAscending ? 'down' : 'up'}`;
+                    
+                    // Sort rows
+                    rows.sort((a, b) => {
+                        let aValue = a.cells[index].textContent.trim();
+                        let bValue = b.cells[index].textContent.trim();
+                        
+                        // Handle numeric values
+                        if (index === 2) { // Prix
+                            aValue = parseFloat(aValue.replace('€', ''));
+                            bValue = parseFloat(bValue.replace('€', ''));
+                        } else if (index === 3) { // Places
+                            aValue = parseInt(aValue);
+                            bValue = parseInt(bValue);
+                        }
+                        
+                        if (isAscending) {
+                            return aValue < bValue ? 1 : -1;
+                        } else {
+                            return aValue > bValue ? 1 : -1;
+                        }
+                    });
+                    
+                    // Reorder rows
+                    rows.forEach(row => tbody.appendChild(row));
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <meta name="csrf-token" content="{{ csrf_token('delete') }}">
+        <h1 class="page-title">Liste des Offres</h1>
+        
+        <!-- Filters Section -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <div class="filter-item search-box">
+                    <label class="filter-label">Rechercher</label>
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="filter-input search-input" placeholder="Rechercher une offre...">
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label">Prix Maximum</label>
+                    <input type="number" class="filter-input" placeholder="Filtrer par prix maximum">
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label">Places Minimum</label>
+                    <input type="number" class="filter-input" placeholder="Filtrer par places minimum">
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <a href="{{ path('admin_offre_new') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Nouvelle Offre
+                </a>
+            </div>
+        </div>
+
+        <!-- Offres Table -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="offreTable" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Titre</th>
+                                <th>Prix</th>
+                                <th>Places disponibles</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for offre in offres %}
+                                <tr>
+                                    <td class="align-middle">
+                                        <img src="{{ asset('uploads/images/' ~ offre.image) }}" alt="{{ offre.titre }}" class="img-fluid" style="max-width: 100px;">
+                                    </td>
+                                    <td class="align-middle">{{ offre.titre }}</td>
+                                    <td class="align-middle">{{ offre.prix }}€</td>
+                                    <td class="align-middle">{{ offre.placesDisponibles }} places disponibles</td>
+                                    <td class="align-middle">
+                                        {% if offre.placesDisponibles <= 0 %}
+                                            <span class="badge bg-danger">Complet</span>
+                                        {% elseif offre.placesDisponibles < 5 %}
+                                            <span class="badge bg-warning">Places limitées</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Disponible</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="align-middle">
+                                        <div class="btn-group">
+                                            <a href="{{ path('admin_offre_show', {'id': offre.id}) }}" class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ path('admin_offre_edit', {'id': offre.id}) }}" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="post" action="{{ path('admin_offre_delete', {'id': offre.id}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.id) }}">
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <button class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-container">
+            <div class="column-chart chart-container">
+                <div id="columnChart"></div>
+            </div>
+            <div class="pie-chart chart-container">
+                <div id="pieChart"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,299 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Nouveau Guide{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .guide-form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background-color: #fde8e8;
+            border: 1px solid #fecaca;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .form-group.has-error .form-control {
+            border-color: #dc3545;
+        }
+
+        .required-field::after {
+            content: '*';
+            color: #dc3545;
+            margin-left: 4px;
+        }
+
+        .help-text {
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            color: #666;
+            text-decoration: none;
+            margin-bottom: 2rem;
+        }
+
+        .btn-back i {
+            margin-right: 0.5rem;
+        }
+
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+
+        .social-media-section {
+            margin-bottom: 2rem;
+        }
+
+        .social-media-section h3 {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-error {
+            background-color: #ffebeb;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+        }
+
+        .alert-error ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .alert-error li {
+            color: #dc3545;
+            padding-left: 15px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+        .alert-error li:before {
+            content: "•";
+            color: #dc3545;
+            position: absolute;
+            left: 0;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <a href="{{ path('app_guide_index') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Retour à la liste
+        </a>
+
+        <div class="guide-form-container">
+            <div class="form-header">
+                <h1>Créer un nouveau guide</h1>
+                <p class="text-muted">Remplissez les informations ci-dessous pour créer un nouveau guide</p>
+            </div>
+
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.nom, {'attr': {'class': 'form-control' ~ (not form.nom.vars.valid ? ' is-invalid' : '')}}) }}
+                    {% if not form.nom.vars.valid %}
+                        <div class="alert-error">
+                            <ul>
+                                {% for error in form.nom.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.prenom, 'Prénom', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.prenom, {'attr': {'class': 'form-control' ~ (not form.prenom.vars.valid ? ' is-invalid' : '')}}) }}
+                    {% if not form.prenom.vars.valid %}
+                        <div class="alert-error">
+                            <ul>
+                                {% for error in form.prenom.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.email, 'Email', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                    {% if form.email.vars.errors|length > 0 %}
+                        <div class="alert-error">
+                            <ul>
+                                {% for error in form.email.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.numTelephone, 'Téléphone', {'label_attr': {'class': 'required-field'}}) }}
+                    {{ form_widget(form.numTelephone, {'attr': {'class': 'form-control'}}) }}
+                    {% if form.numTelephone.vars.errors|length > 0 %}
+                        <div class="alert-error">
+                            <ul>
+                                {% for error in form.numTelephone.vars.errors %}
+                                    <li>{{ error.message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.description, 'Description', {'label_attr': {'class': 'required-field'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                {% if form.description.vars.errors|length > 0 %}
+                    <div class="alert-error">
+                        <ul>
+                            {% for error in form.description.vars.errors %}
+                                <li>{{ error.message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                <div class="help-text">Décrivez votre expérience et vos spécialités en tant que guide.</div>
+            </div>
+
+            <div class="social-media-section">
+                <h3>Réseaux sociaux</h3>
+                <div class="form-row">
+                    <div class="form-group {{ form_errors(form.facebook) ? 'has-error' : '' }}">
+                        {{ form_label(form.facebook, 'Facebook') }}
+                        {{ form_widget(form.facebook, {'attr': {'class': 'form-control'}}) }}
+                        {% if form.facebook.vars.errors|length > 0 %}
+                            <div class="alert-error">
+                                <ul>
+                                    {% for error in form.facebook.vars.errors %}
+                                        <li>{{ error.message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group {{ form_errors(form.instagram) ? 'has-error' : '' }}">
+                        {{ form_label(form.instagram, 'Instagram') }}
+                        {{ form_widget(form.instagram, {'attr': {'class': 'form-control'}}) }}
+                        {% if form.instagram.vars.errors|length > 0 %}
+                            <div class="alert-error">
+                                <ul>
+                                    {% for error in form.instagram.vars.errors %}
+                                        <li>{{ error.message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.photo, 'Photo de profil') }}
+                {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+                {% if form.photo.vars.errors|length > 0 %}
+                    <div class="alert-error">
+                        <ul>
+                            {% for error in form.photo.vars.errors %}
+                                <li>{{ error.message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                <div class="help-text">Format accepté : JPEG ou PNG, taille maximale : 1 Mo</div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-plus-circle me-2"></i>
+                Créer le guide
+            </button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Supprimer la réservation{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .delete-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .delete-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .delete-header {
+            background: #e53e3e;
+            padding: 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .delete-title {
+            font-size: 1.5rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .delete-body {
+            padding: 2rem;
+        }
+
+        .reservation-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .warning-message {
+            text-align: center;
+            color: #e53e3e;
+            font-weight: 500;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: #fff5f5;
+            border-radius: 8px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="delete-container">
+        <div class="delete-card">
+            <div class="delete-header">
+                <h1 class="delete-title">Supprimer la réservation</h1>
+            </div>
+
+            <div class="delete-body">
+                <div class="reservation-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Destination</span>
+                        <span class="detail-value">{{ reservation.offre.titre }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Nombre de personnes</span>
+                        <span class="detail-value">{{ reservation.nombrePersonne }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Prix total</span>
+                        <span class="detail-value">{{ reservation.offre.prix * reservation.nombrePersonne }}€</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date de réservation</span>
+                        <span class="detail-value">{{ reservation.dateReservation|date('d/m/Y') }}</span>
+                    </div>
+                </div>
+
+                <div class="warning-message">
+                    Attention : Cette action est irréversible. La réservation sera définitivement supprimée.
+                </div>
+
+                <form method="post" action="{{ path('app_reservation_delete', {'id': reservation.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservation.id) }}">
+                    <div class="form-actions">
+                        <a href="{{ path('app_reservation_index') }}" class="btn btn-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

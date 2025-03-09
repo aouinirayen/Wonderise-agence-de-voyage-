@@ -1,0 +1,55 @@
+<tbody id="offre-list">
+    {% for offre in offres %}
+        <tr>
+            <td>
+                {% if offre.image %}
+                    <img src="{{ asset('uploads/images/' ~ offre.image) }}" alt="{{ offre.titre }}" class="offer-image">
+                {% else %}
+                    <div class="offer-image bg-light d-flex align-items-center justify-content-center">
+                        <i class="fas fa-image text-muted"></i>
+                    </div>
+                {% endif %}
+            </td>
+            <td>
+                <div class="offer-info">
+                    <span class="offer-title">{{ offre.titre }}</span>
+                    <span class="offer-price">{{ offre.description|slice(0, 100) }}...</span>
+                </div>
+            </td>
+            <td>{{ offre.prix }}€</td>
+            <td>
+                <div class="offer-info">
+                    <span class="offer-title">{{ offre.placesDisponibles }}</span>
+                    <span class="offer-price">places disponibles</span>
+                </div>
+            </td>
+            <td>
+                <span class="badge badge-{{ offre.placesDisponibles > 0 ? 'active' : 'inactive' }}">
+                    {{ offre.placesDisponibles > 0 ? 'Disponible' : 'Complet' }}
+                </span>
+            </td>
+            <td>
+                <div class="btn-group">
+                    <a href="{{ path('admin_offre_show', {'id': offre.id}) }}" class="btn btn-sm btn-info">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="{{ path('admin_offre_edit', {'id': offre.id}) }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <form method="post" action="{{ path('admin_offre_delete', {'id': offre.id}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.id) }}">
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="6" class="text-center py-4">
+                <div class="text-muted">Aucune offre trouvée</div>
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>

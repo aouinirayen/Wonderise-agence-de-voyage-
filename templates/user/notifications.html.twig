@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block body %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <h3 class="card-title">Notifications</h3>
+                            <a href="{{ path('user_notifications_mark_all_read') }}" class="btn btn-link text-dark">
+                                <i class="fas fa-check-circle"></i> Mark all as read
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-tabs mb-4">
+                                <li class="nav-item">
+                                    <a class="nav-link {% if activeType == 'all' %}active{% endif %}" href="{{ path('user_notifications') }}">All <span class="badge bg-primary">6</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if activeType == 'booking' %}active{% endif %}" href="{{ path('user_notifications', {'type': 'booking'}) }}">Bookings</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if activeType == 'offer' %}active{% endif %}" href="{{ path('user_notifications', {'type': 'offer'}) }}">Offers</a>
+                                </li>
+                                <li class="nav-item ms-auto">
+                                    <a href="{{ path('user_notifications_settings') }}" class="nav-link">
+                                        <i class="fas fa-cog"></i>
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <div class="notification-list">
+                                {% for notification in notifications %}
+                                    {% if activeType == 'all' or notification.type == activeType %}
+                                        <div class="notification-item d-flex align-items-start mb-4 {% if not notification.isRead %}bg-light{% endif %}" data-notification-type="{{ notification.type }}">
+                                            {% if notification.type == 'booking' %}
+                                                <div class="rounded-circle me-3 bg-success d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px">
+                                                    <i class="fas fa-calendar-check"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex align-items-center mb-1">
+                                                        <strong class="me-2">{{ notification.title }}</strong>
+                                                        <span class="text-muted">{{ notification.message }}</span>
+                                                        <small class="ms-auto text-muted">{{ notification.createdAt|ago }}</small>
+                                                    </div>
+                                                    {% if notification.description %}
+                                                        <div class="booking-details p-2 rounded bg-light d-flex align-items-center mb-2">
+                                                            <i class="fas fa-plane-departure me-2 text-success"></i>
+                                                            <span>{{ notification.description }}</span>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if notification.actionUrl %}
+                                                        <a href="{{ notification.actionUrl }}" class="btn btn-sm btn-outline-primary">View Booking</a>
+                                                    {% endif %}
+                                                </div>
+                                            {% elseif notification.type == 'offer' %}
+                                                <div class="rounded-circle me-3 bg-primary d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px">
+                                                    <i class="fas fa-gift"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex align-items-center mb-1">
+                                                        <strong class="me-2">{{ notification.title }}</strong>
+                                                        <span class="text-muted">{{ notification.message }}</span>
+                                                        <small class="ms-auto text-muted">{{ notification.createdAt|ago }}</small>
+                                                    </div>
+                                                    {% if notification.description %}
+                                                        <div class="offer-details p-2 rounded bg-light d-flex align-items-center mb-2">
+                                                            <i class="fas fa-tag me-2 text-primary"></i>
+                                                            <span>{{ notification.description }}</span>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if notification.actionUrl %}
+                                                        <a href="{{ notification.actionUrl }}" class="btn btn-sm btn-outline-primary">View Offer</a>
+                                                    {% endif %}
+                                                </div>
+                                            {% else %}
+                                                <div class="rounded-circle me-3 bg-info d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px">
+                                                    <i class="fas fa-bell"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex align-items-center mb-1">
+                                                        <strong class="me-2">{{ notification.title }}</strong>
+                                                        <span class="text-muted">{{ notification.message }}</span>
+                                                        <small class="ms-auto text-muted">{{ notification.createdAt|ago }}</small>
+                                                    </div>
+                                                    {% if notification.description %}
+                                                        <div class="details p-2 rounded bg-light d-flex align-items-center mb-2">
+                                                            <i class="fas fa-info-circle me-2 text-info"></i>
+                                                            <span>{{ notification.description }}</span>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if notification.actionUrl %}
+                                                        <a href="{{ notification.actionUrl }}" class="btn btn-sm btn-outline-info">View Details</a>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                            {% if notification.isUnread %}
+                                                <span class="notification-indicator bg-primary"></span>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            <div class="text-center mt-4">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.notification-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 8px;
+}
+.file-share {
+    background-color: rgba(0,0,0,0.05);
+}
+.meeting-link {
+    background-color: rgba(0,0,0,0.05);
+}
+</style>
+{% endblock %}
